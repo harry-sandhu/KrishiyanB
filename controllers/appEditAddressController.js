@@ -54,7 +54,7 @@ exports.getAddressByUID = async (req, res) => {
     res.status(200).send({
       success: true,
       message: "Address retrieved successfully",
-      data: { address: addressEntry },
+      data: addressEntry,
     });
   } catch (error) {
     console.error("Error retrieving address:", error);

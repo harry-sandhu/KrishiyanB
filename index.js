@@ -39,6 +39,9 @@ app.use("/api/check-admin", tokenAuth, adminAuthorizer); // for frontend check
 app.use("/api/check-superAdmin", tokenAuth, superAdminAuthorizer); // for frontend check
 
 //Routes
+app.get("/", (req, res) => {
+  res.send("Server is working");
+});
 app.use("/api", require("./routes/proField.js"));
 app.use("/api", require("./routes/proSensor.js"));
 app.use("/api", require("./routes/proUser.js"));

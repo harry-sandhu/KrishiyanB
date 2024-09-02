@@ -17,12 +17,22 @@ exports.createNews = async (req, res) => {
 // Get all news entries
 exports.getAllNews = async (req, res) => {
   try {
-    const news = await News.find().sort({ priority: -1, createdAt: -1 });
-    console.log("Fetched news:", news); // Add this line
-    res.status(200).json(news);
+    // Fetching all news sorted by priority in ascending order (low to high)
+    const news = await News.find().sort({ priority: 1 });
+
+    // Sending the sorted news as a response with the specified format
+    res.status(200).send({
+      success: true,
+      message: "News retrieved successfully",
+      data: news,
+    });
   } catch (error) {
-    console.error("Error fetching news:", error); // Add this line
-    res.status(500).json({ message: "Error fetching news", error });
+    // Handling errors and sending an error response with the specified format
+    res.status(500).send({
+      success: false,
+      message: "Failed to retrieve news",
+      error: error.message,
+    });
   }
 };
 

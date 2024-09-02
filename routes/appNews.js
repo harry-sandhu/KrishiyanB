@@ -8,7 +8,7 @@ const newsController = require("../controllers/appNews");
 router.post("/news", newsController.createNews);
 
 // Get all news entries
-router.get("/news", newsController.getAllNews);
+router.get("/all/news", newsController.getAllNews);
 
 // Get a single news entry by ID
 router.get("/news/:id", newsController.getNewsById);

@@ -5,7 +5,6 @@ exports.createOrUpdateBankDetails = async (req, res) => {
   try {
     const { uid, bankName, accountName, accountNumber, ifscCode } = req.body;
 
-    // Check if UID is provided
     if (!uid) {
       return res.status(400).send({
         success: false,
@@ -20,7 +19,7 @@ exports.createOrUpdateBankDetails = async (req, res) => {
     let bankDetailsEntry = await BankDetails.findOneAndUpdate(
       { uid },
       { bankName, accountName, accountNumber, ifscCode },
-      { new: true, upsert: true } // upsert creates a new document if no document matches the query
+      { new: true, upsert: true }
     );
 
     const message = bankDetailsEntry.wasNew

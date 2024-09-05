@@ -129,11 +129,10 @@ exports.getFarmerNamesByDealer = async (req, res) => {
 // Controller to get farmer data by dealer number and optional filters
 exports.getFarmerDataByDealer = async (req, res) => {
   try {
-    // Extract the query parameters
     const { dealerNumber } = req.params;
     const { village, typeOfCultivationPractice, whatsappNumber } = req.query;
 
-    // Build the query object based on the provided parameters
+    // Create query for farmer collection
     let query = { dealerNumber };
 
     if (village) {
@@ -148,10 +147,9 @@ exports.getFarmerDataByDealer = async (req, res) => {
       query.whatsappNumber = whatsappNumber;
     }
 
-    // Find farmers based on the query object
+    // Find farmers based on the query
     const farmers = await appFarmer.find(query);
 
-    // Check if farmers were found
     if (!farmers.length) {
       return res.status(404).send({
         success: false,
@@ -163,16 +161,36 @@ exports.getFarmerDataByDealer = async (req, res) => {
       });
     }
 
-    // Respond with the found farmers' data
+    // Array to hold the combined farmer + crop cultivation data
+    let response = [];
+
+    // Iterate over each farmer and use whatsappNumber as fid to find crop cultivation data
+    for (const farmer of farmers) {
+      // Use the farmer's whatsappNumber as the fid to query CropCultivation
+      const cropData = await CropCultivation.find({
+        fid: farmer.whatsappNumber,
+      });
+
+      // Combine the farmer's details with their crop cultivation data
+      response.push({
+        farmerDetails: farmer,
+        cropCultivationDetails: cropData.length
+          ? cropData
+          : "No crop data found for this farmer",
+      });
+    }
+
+    // Send response with combined farmer and crop data
     res.status(200).send({
       success: true,
-      message: "Farmers' data retrieved successfully",
-      data: farmers,
+      message:
+        "Farmers' data and crop cultivation details retrieved successfully",
+      data: response,
     });
   } catch (error) {
     console.error("Error retrieving farmers' data:", error);
 
-    // Respond with an error if there is an issue retrieving data
+    // Error handling
     res.status(500).send({
       success: false,
       message: "Error retrieving farmers' data",
@@ -525,7 +543,6 @@ exports.getFarmersByCultivationAndDealer = async (req, res) => {
   try {
     const { typeOfCultivationPractice, dealerNumber } = req.params;
 
-    // Find farmers based on typeOfCultivationPractice and dealerNumber
     const farmers = await appFarmer
       .find({
         typeOfCultivationPractice,
@@ -562,12 +579,10 @@ exports.getFarmersByCultivationAndDealer = async (req, res) => {
   }
 };
 
-// Controller function to search farmers by dealer number and WhatsApp number
 exports.searchFarmersByDealerAndWhatsApp = async (req, res) => {
   try {
     const { dealerNumber, whatsappNumber } = req.query;
 
-    // Build the query object based on provided parameters
     const query = {};
     if (dealerNumber) {
       query.dealerNumber = dealerNumber;
@@ -576,7 +591,6 @@ exports.searchFarmersByDealerAndWhatsApp = async (req, res) => {
       query.whatsappNumber = whatsappNumber;
     }
 
-    // Perform the search in the appFarmer collection
     const farmers = await appFarmer.find(query);
 
     if (farmers.length === 0) {
@@ -607,10 +621,9 @@ exports.searchFarmersByDealerAndWhatsApp = async (req, res) => {
 // Update Farmer Profile by whatsappNumber (excluding whatsappNumber and dealerNumber)
 exports.updateFarmerByWhatsapp = async (req, res) => {
   try {
-    const { whatsappNumber } = req.params; // Get whatsappNumber from request parameters
+    const { whatsappNumber } = req.params;
     const updateData = req.body;
 
-    // Prevent updating whatsappNumber and dealerNumber
     delete updateData.whatsappNumber;
     delete updateData.dealerNumber;
 

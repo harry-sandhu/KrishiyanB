@@ -190,7 +190,7 @@ exports.registerCropCultivation = async (req, res) => {
       dealerNumber,
       fid,
       farmerName,
-      crops, // This is now a single string
+      crops,
       variety,
       dateOfSowing,
       geolocation,
@@ -365,7 +365,6 @@ exports.getCropsByDealerNumber = async (req, res) => {
   try {
     const { dealerNumber } = req.params;
 
-    // Query the database for distinct crops under the given dealer number
     const crops = await CropCultivation.find({ dealerNumber }).distinct(
       "crops"
     );
@@ -407,7 +406,6 @@ exports.getFarmersByCriteria = async (req, res) => {
       });
     }
 
-    // Step 1: Find farmers based on dealerNumber and optionally village
     const farmersQuery = { dealerNumber };
     if (village) {
       farmersQuery.village = village;
@@ -423,7 +421,6 @@ exports.getFarmersByCriteria = async (req, res) => {
       });
     }
 
-    // Step 2: Find crop cultivation data based on dealerNumber and crop
     const cropCultivations = await CropCultivation.find({
       dealerNumber,
       crops: crop,
@@ -441,7 +438,6 @@ exports.getFarmersByCriteria = async (req, res) => {
       });
     }
 
-    // Step 3: Intersect farmers based on _id and fid
     const intersectedFarmerIds = farmerIds.filter((id) =>
       cropCultivationFids.includes(id)
     );
@@ -456,7 +452,6 @@ exports.getFarmersByCriteria = async (req, res) => {
       });
     }
 
-    // Step 4: Calculate expected yield and sort
     let totalAreaInAcres = 0;
     const farmerDetails = [];
 
@@ -489,7 +484,6 @@ exports.getFarmersByCriteria = async (req, res) => {
       });
     }
 
-    // Step 5: Sort the farmer details
     if (sort) {
       if (sort === "highToLow") {
         farmerDetails.sort((a, b) => b.expectedYield - a.expectedYield);
@@ -502,7 +496,6 @@ exports.getFarmersByCriteria = async (req, res) => {
         });
       }
     } else {
-      // Default sorting: low to high
       farmerDetails.sort((a, b) => a.expectedYield - b.expectedYield);
     }
 

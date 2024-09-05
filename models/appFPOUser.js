@@ -41,6 +41,9 @@ const FpoOrganizationSchema = new mongoose.Schema({
   CBBOName: {
     type: String,
   },
+  URl: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("FpoOrganization", FpoOrganizationSchema);

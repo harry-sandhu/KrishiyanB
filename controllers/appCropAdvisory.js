@@ -36,12 +36,30 @@ exports.getCropDetailsByName = async (req, res) => {
     console.log("Found crop:", crop);
 
     if (!crop) {
-      return res.status(404).json({ message: "Crop not found" });
+      return res.status(404).send({
+        success: false,
+        message: "Crop not found",
+        error: {
+          code: "CROP_NOT_FOUND",
+          description: `No crop found with the name: ${name}`,
+        },
+      });
     }
 
-    res.json(crop);
+    res.status(200).send({
+      success: true,
+      message: "Crop found successfully",
+      data: crop,
+    });
   } catch (error) {
     console.error("Error fetching crop details:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).send({
+      success: false,
+      message: "Error fetching crop details",
+      error: {
+        code: "CROP_FETCH_ERROR",
+        description: error.message,
+      },
+    });
   }
 };

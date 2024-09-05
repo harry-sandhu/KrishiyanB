@@ -610,3 +610,48 @@ exports.searchFarmersByDealerAndWhatsApp = async (req, res) => {
     });
   }
 };
+
+// Update Farmer Profile by whatsappNumber (excluding whatsappNumber and dealerNumber)
+exports.updateFarmerByWhatsapp = async (req, res) => {
+  try {
+    const { whatsappNumber } = req.params; // Get whatsappNumber from request parameters
+    const updateData = req.body;
+
+    // Prevent updating whatsappNumber and dealerNumber
+    delete updateData.whatsappNumber;
+    delete updateData.dealerNumber;
+
+    const updatedFarmer = await appFarmer.findOneAndUpdate(
+      { whatsappNumber },
+      updateData,
+      { new: true }
+    );
+
+    if (!updatedFarmer) {
+      return res.status(404).send({
+        success: false,
+        message: "Farmer not found",
+        error: {
+          code: "FARMER_NOT_FOUND",
+          description: `No farmer found with whatsapp number: ${whatsappNumber}`,
+        },
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      message: "Farmer updated successfully",
+      data: updatedFarmer,
+    });
+  } catch (error) {
+    console.error("Error updating farmer:", error);
+    res.status(400).send({
+      success: false,
+      message: "Error updating farmer",
+      error: {
+        code: "FARMER_UPDATE_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};

@@ -47,4 +47,8 @@ router.get(
 // Route to search farmers by dealer number and WhatsApp number
 router.get("/farmer/search", farmerController.searchFarmersByDealerAndWhatsApp);
 
+router.put(
+  "/farmer/whatsapp/:whatsappNumber",
+  farmerController.updateFarmerByWhatsapp
+);
 module.exports = router;

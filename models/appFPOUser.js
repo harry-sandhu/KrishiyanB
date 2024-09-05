@@ -15,6 +15,7 @@ const FpoOrganizationSchema = new mongoose.Schema({
   },
   dateOfFpo: {
     type: Date,
+    default: Date.now,
   },
   organizationalEmail: {
     type: String,
@@ -24,12 +25,21 @@ const FpoOrganizationSchema = new mongoose.Schema({
 
     unique: true,
   },
+  yourDesignation: {
+    type: String,
+  },
   promoterName: {
     type: String,
   },
   password: {
     type: String,
     required: true,
+  },
+  RegistrationNumber: {
+    type: String,
+  },
+  CBBOName: {
+    type: String,
   },
 });
 

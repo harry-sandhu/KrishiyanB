@@ -318,3 +318,54 @@ exports.getCommoditiesByValue = async (req, res) => {
     });
   }
 };
+
+// Controller to fetch commodities based on uid, commodity, and optional operation
+exports.getCommoditiesByUidOperationCommodity = async (req, res) => {
+  try {
+    // Extract uid, commodity, and operation from request parameters
+    const { uid, commodity } = req.params;
+    let { operation } = req.query; // operation can be provided in query params
+
+    // If no operation is specified, default to "Buy"
+    if (!operation) {
+      operation = "Buy";
+    }
+
+    // Construct the query based on uid, commodity, and operation
+    const query = { uid, commodity, operation };
+
+    // Find commodities matching the provided uid, commodity, and operation (or default)
+    const commodities = await Commodity.find(query);
+
+    // If no commodities are found, return a 404 error
+    if (!commodities.length) {
+      return res.status(404).send({
+        success: false,
+        message: `No Enquiry found for uid: ${uid}, commodity: ${commodity}, and operation: ${operation}`,
+        error: {
+          code: "Enquiry_NOT_FOUND",
+          description: `No Enquiry match the specified criteria.`,
+        },
+      });
+    }
+
+    // Return all the data related to the found commodities
+    res.status(200).send({
+      success: true,
+      message: `Enquiry retrieved successfully for uid: ${uid}, commodity: ${commodity}, and operation: ${operation}`,
+      data: commodities, // Send all commodity details
+    });
+  } catch (error) {
+    console.error("Error retrieving commodities:", error);
+
+    // Handle server error
+    res.status(500).send({
+      success: false,
+      message: "Error retrieving commodities",
+      error: {
+        code: "Enquiry_RETRIEVAL_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};

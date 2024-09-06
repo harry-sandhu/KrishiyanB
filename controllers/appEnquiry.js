@@ -276,3 +276,45 @@ exports.updateCommodityByUidAndId = async (req, res) => {
     });
   }
 };
+
+// Controller to fetch commodities based on the commodity value
+exports.getCommoditiesByValue = async (req, res) => {
+  try {
+    // Extract the commodity value from request parameters
+    const { commodity } = req.params;
+
+    // Find all records matching the provided commodity value
+    const commodities = await Commodity.find({ commodity });
+
+    // If no commodities found, return a 404 error
+    if (!commodities.length) {
+      return res.status(404).send({
+        success: false,
+        message: `No commodities found for the given value: ${commodity}`,
+        error: {
+          code: "COMMODITY_NOT_FOUND",
+          description: `No commodities match the specified value: ${commodity}.`,
+        },
+      });
+    }
+
+    // Return all the data related to the found commodities
+    res.status(200).send({
+      success: true,
+      message: `Commodities for ${commodity} retrieved successfully`,
+      data: commodities, // Send all commodity details
+    });
+  } catch (error) {
+    console.error("Error retrieving commodities:", error);
+
+    // Handle server error
+    res.status(500).send({
+      success: false,
+      message: "Error retrieving commodities",
+      error: {
+        code: "COMMODITY_RETRIEVAL_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};

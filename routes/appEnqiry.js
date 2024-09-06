@@ -17,6 +17,11 @@ router.put(
   commodityController.updateCommodityByUidAndId
 );
 
+router.get(
+  "/commodities/:commodity",
+  commodityController.getCommoditiesByValue
+);
+
 // Route for updating the verified status of a commodity
 router.patch(
   "/commodity/:uid/verified",

@@ -50,18 +50,26 @@ const getMandiPrices = async (req, res) => {
   try {
     const { state, district, commodity, initialDate, finalDate } = req.query;
 
-    // Query to find mandi prices matching the provided filters
-    const mandiPrices = await MandiPrice.find({
+    // Ensure that dates are in the format "DD/MM/YYYY"
+    const formattedInitialDate = initialDate; // Assumed format is DD/MM/YYYY
+    const formattedFinalDate = finalDate; // Assumed format is DD/MM/YYYY
+
+    // Fetch all relevant data based on state, district, and commodity
+    const allData = await MandiPrice.find({
       state: state,
       district: district,
       commodity: commodity,
-      arrival_date: {
-        $gte: new Date(initialDate), // Filter by date greater than or equal to initialDate
-        $lte: new Date(finalDate), // Filter by date less than or equal to finalDate
-      },
     });
 
-    if (mandiPrices.length === 0) {
+    // Filter data manually based on arrival_date
+    const filteredData = allData.filter((item) => {
+      const arrivalDate = item.arrival_date;
+      return (
+        arrivalDate >= formattedInitialDate && arrivalDate <= formattedFinalDate
+      );
+    });
+
+    if (filteredData.length === 0) {
       return res.status(404).json({
         success: false,
         message: "No mandi price data found for the provided filters",
@@ -71,7 +79,7 @@ const getMandiPrices = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Mandi prices retrieved successfully",
-      data: mandiPrices,
+      data: filteredData,
     });
   } catch (error) {
     console.error("Error fetching mandi prices:", error);

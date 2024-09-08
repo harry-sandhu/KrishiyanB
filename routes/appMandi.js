@@ -8,4 +8,6 @@ router.post(
   mandiPriceController.fetchAndSaveMandiPrices
 );
 
+router.get("/mandi/mandiPrices", mandiPriceController.getMandiPrices);
+
 module.exports = router;

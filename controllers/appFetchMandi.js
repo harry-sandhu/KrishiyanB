@@ -45,6 +45,48 @@ const fetchAndSaveMandiPrices = async (req, res) => {
   }
 };
 
+// Get Mandi Price data by state, district, commodity, and date range
+const getMandiPrices = async (req, res) => {
+  try {
+    const { state, district, commodity, initialDate, finalDate } = req.query;
+
+    // Query to find mandi prices matching the provided filters
+    const mandiPrices = await MandiPrice.find({
+      state: state,
+      district: district,
+      commodity: commodity,
+      arrival_date: {
+        $gte: new Date(initialDate), // Filter by date greater than or equal to initialDate
+        $lte: new Date(finalDate), // Filter by date less than or equal to finalDate
+      },
+    });
+
+    if (mandiPrices.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No mandi price data found for the provided filters",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Mandi prices retrieved successfully",
+      data: mandiPrices,
+    });
+  } catch (error) {
+    console.error("Error fetching mandi prices:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching mandi prices",
+      error: {
+        code: "MANDI_PRICE_FETCH_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};
+
 module.exports = {
   fetchAndSaveMandiPrices,
+  getMandiPrices,
 };

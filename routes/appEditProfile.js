@@ -9,7 +9,15 @@ router.put(
   "/fpoOrganization/contact/:contactNumber",
   fpoOrganizationController.updateProfileByContactNumber
 );
+router.put(
+  "/entity/contact/:contactNumber",
+  fpoOrganizationController.updateByContactNumber
+);
 
+router.get(
+  "/entity/contact/:contactNumber",
+  fpoOrganizationController.getByContactNumber
+);
 router.get(
   "/fpoOrganization/contact/:contactNumber",
   fpoOrganizationController.getProfileByContactNumber

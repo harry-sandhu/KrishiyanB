@@ -158,3 +158,124 @@ exports.updateProfileByContactNumber = async (req, res) => {
     });
   }
 };
+
+// Update Entity by contact number
+exports.updateByContactNumber = async (req, res) => {
+  try {
+    const { contactNumber } = req.params; // Get the contact number from params
+    const {
+      nameOfEntity, // To update nameOfFpo
+      typeOfEntity, // To update typeOfFpo
+      incorporationDate, // To update dateOfFpo
+      incorporationNumber, // To update IncorportionNumber
+      businessLocation, // To update BusinessLocation
+      contactPersonName, // To update promoterName
+      yourDesignation, // To update yourDesignation
+      URL, // To update URL
+    } = req.body;
+
+    // Find the FPO organization by contact number
+    const fpo = await FpoOrganization.findOne({ contactNumber });
+
+    if (!fpo) {
+      return res.status(404).send({
+        success: false,
+        message: "Entity not found",
+        error: {
+          code: "Entity_NOT_FOUND",
+          description: `No Entity found with contact number: ${contactNumber}`,
+        },
+      });
+    }
+
+    // Only update the fields provided in the request body
+    if (nameOfEntity) fpo.nameOfFpo = nameOfEntity;
+    if (typeOfEntity) fpo.typeOfFpo = typeOfEntity;
+    if (incorporationDate) fpo.dateOfFpo = incorporationDate;
+    if (incorporationNumber) fpo.IncorportionNumber = incorporationNumber;
+    if (businessLocation) fpo.BusinessLocation = businessLocation;
+    if (contactPersonName) fpo.promoterName = contactPersonName;
+    if (yourDesignation) fpo.yourDesignation = yourDesignation;
+    if (URL) fpo.URl = URL;
+
+    // Save the updated FPO organization
+    await fpo.save();
+
+    // Return only the updated fields in the response
+    const updatedFields = {
+      contactNumber,
+    };
+
+    if (nameOfEntity) updatedFields.nameOfFpo = nameOfEntity;
+    if (typeOfEntity) updatedFields.typeOfFpo = typeOfEntity;
+    if (incorporationDate) updatedFields.dateOfFpo = incorporationDate;
+    if (incorporationNumber)
+      updatedFields.IncorportionNumber = incorporationNumber;
+    if (businessLocation) updatedFields.BusinessLocation = businessLocation;
+    if (contactPersonName) updatedFields.promoterName = contactPersonName;
+    if (yourDesignation) updatedFields.yourDesignation = yourDesignation;
+    if (URL) updatedFields.URL = URL;
+
+    res.status(200).send({
+      success: true,
+      message: "Entity updated successfully",
+      data: updatedFields,
+    });
+  } catch (error) {
+    console.error("Error updating Entity:", error);
+    res.status(500).send({
+      success: false,
+      message: "Error updating Entity",
+      error: {
+        code: "Entity_UPDATE_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};
+
+// Get FPO Organization by contact number
+exports.getByContactNumber = async (req, res) => {
+  try {
+    const { contactNumber } = req.params; // Get contact number from params
+
+    // Find the FPO organization by contact number
+    const fpo = await FpoOrganization.findOne({ contactNumber });
+
+    if (!fpo) {
+      return res.status(404).send({
+        success: false,
+        message: "Entity not found",
+        error: {
+          code: "Entity_NOT_FOUND",
+          description: `No entity found with contact number: ${contactNumber}`,
+        },
+      });
+    }
+
+    // Prepare the response with the specific fields, including contact number
+    const response = {
+      nameOfEntity: fpo.nameOfFpo,
+      typeOfEntity: fpo.typeOfFpo,
+      incorporationDate: fpo.dateOfFpo,
+      incorporationNumber: fpo.IncorportionNumber,
+      businessLocation: fpo.BusinessLocation,
+      contactPersonName: fpo.promoterName,
+      yourDesignation: fpo.yourDesignation,
+      URL: fpo.URl,
+      contactNumber: fpo.contactNumber, // Include contact number in the response
+    };
+
+    res.status(200).send(response);
+  } catch (error) {
+    console.error("Error fetching Entity:", error);
+    res.status(500).send({
+      success: false,
+      message: "Error fetching Entity",
+      error: {
+        code: "Entity_FETCH_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};

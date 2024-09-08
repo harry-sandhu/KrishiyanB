@@ -17,6 +17,12 @@ const FpoOrganizationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  IncorportionNumber: {
+    type: String,
+  },
+  BusinessLocation: {
+    type: String,
+  },
   organizationalEmail: {
     type: String,
   },

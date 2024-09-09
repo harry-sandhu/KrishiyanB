@@ -6,7 +6,7 @@ const MandiPrice = require("../models/mandiPrices");
 const { fetchDataAndStoreInDB } = require("./fetchStoreData");
 
 // API endpoint to get filter options
-router.get("/filter-options", async (req, res) => {
+router.get("me/filter-options", async (req, res) => {
   try {
     const mandiData = await MandiPrice.find();
 

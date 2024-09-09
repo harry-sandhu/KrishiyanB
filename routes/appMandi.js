@@ -7,7 +7,7 @@ router.post(
   "/mandi/fetch-and-save",
   mandiPriceController.fetchAndSaveMandiPrices
 );
-
+router.get("/mandi/mandi-price-filter", mandiPriceController.getMandiPriceData);
 router.get("/mandi/mandiPrices", mandiPriceController.getMandiPrices);
 
 module.exports = router;

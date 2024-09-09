@@ -94,7 +94,58 @@ const getMandiPrices = async (req, res) => {
   }
 };
 
+const getMandiPriceData = async (req, res) => {
+  try {
+    // Use aggregation to group data by state, district, and commodity
+    const result = await MandiPrice.aggregate([
+      {
+        // Group by state, district, and commodity
+        $group: {
+          _id: {
+            state: "$state",
+            district: "$district",
+            commodity: "$commodity",
+          },
+        },
+      },
+      {
+        // Group by state and district to create the desired structure
+        $group: {
+          _id: { state: "$_id.state", district: "$_id.district" },
+          commodities: { $addToSet: "$_id.commodity" }, // Ensure unique commodities
+        },
+      },
+      {
+        // Group by state and push districts into an array
+        $group: {
+          _id: "$_id.state",
+          districts: {
+            $push: {
+              district: "$_id.district",
+              commodities: "$commodities",
+            },
+          },
+        },
+      },
+      {
+        // Format the output to remove _id and match the structure you want
+        $project: {
+          _id: 0,
+          state: "$_id",
+          districts: 1,
+        },
+      },
+    ]);
+
+    // Send the structured response
+    res.json(result);
+  } catch (error) {
+    console.error("Error fetching mandi price data:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
 module.exports = {
   fetchAndSaveMandiPrices,
   getMandiPrices,
+  getMandiPriceData,
 };

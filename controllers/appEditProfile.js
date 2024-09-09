@@ -253,19 +253,21 @@ exports.getByContactNumber = async (req, res) => {
       });
     }
 
-    // Prepare the response with the specific fields, including contact number
     const response = {
-      nameOfEntity: fpo.nameOfFpo,
-      typeOfEntity: fpo.typeOfFpo,
-      incorporationDate: fpo.dateOfFpo,
-      incorporationNumber: fpo.IncorportionNumber,
-      businessLocation: fpo.BusinessLocation,
-      contactPersonName: fpo.promoterName,
-      yourDesignation: fpo.yourDesignation,
-      URL: fpo.URl,
-      contactNumber: fpo.contactNumber, // Include contact number in the response
+      success: true,
+      message: "Entity fetched successfully",
+      data: {
+        nameOfEntity: fpo.nameOfFpo,
+        typeOfEntity: fpo.typeOfFpo,
+        incorporationDate: fpo.dateOfFpo,
+        incorporationNumber: fpo.IncorportionNumber,
+        businessLocation: fpo.BusinessLocation,
+        contactPersonName: fpo.promoterName,
+        yourDesignation: fpo.yourDesignation,
+        URL: fpo.URl,
+        contactNumber: fpo.contactNumber,
+      },
     };
-
     res.status(200).send(response);
   } catch (error) {
     console.error("Error fetching Entity:", error);

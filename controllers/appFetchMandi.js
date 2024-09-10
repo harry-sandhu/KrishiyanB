@@ -1,6 +1,6 @@
 const axios = require("axios");
 const MandiPrice = require("../models/mandiPrices"); // Adjust the path as needed
-
+const State = require("../models/appMandiFilter");
 // URL of the API
 const apiUrl =
   "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001f665d8c53ebc4d9f7c6cbee1f85aa583&format=json&limit=10000";
@@ -96,10 +96,8 @@ const getMandiPrices = async (req, res) => {
 
 const getMandiPriceData = async (req, res) => {
   try {
-    // Use aggregation to group data by state, district, and commodity
     const result = await MandiPrice.aggregate([
       {
-        // Group by state, district, and commodity
         $group: {
           _id: {
             state: "$state",
@@ -109,14 +107,12 @@ const getMandiPriceData = async (req, res) => {
         },
       },
       {
-        // Group by state and district to create the desired structure
         $group: {
           _id: { state: "$_id.state", district: "$_id.district" },
-          commodities: { $addToSet: "$_id.commodity" }, // Ensure unique commodities
+          commodities: { $addToSet: "$_id.commodity" },
         },
       },
       {
-        // Group by state and push districts into an array
         $group: {
           _id: "$_id.state",
           districts: {
@@ -128,7 +124,6 @@ const getMandiPriceData = async (req, res) => {
         },
       },
       {
-        // Format the output to remove _id and match the structure you want
         $project: {
           _id: 0,
           state: "$_id",
@@ -137,15 +132,147 @@ const getMandiPriceData = async (req, res) => {
       },
     ]);
 
-    // Send the structured response
-    res.json(result);
+    res.status(200).json({
+      success: true,
+      message: "Mandi price data fetched successfully",
+      data: result,
+    });
   } catch (error) {
     console.error("Error fetching mandi price data:", error);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({
+      success: false,
+      message: "Error fetching mandi prices",
+      error: {
+        code: "MANDI_PRICE_FETCH_ERROR",
+        description: error.message,
+      },
+    });
   }
 };
+
+const getStatesDistrictsCommodities = async (req, res) => {
+  const { stateName, districtName } = req.query;
+
+  try {
+    // If no stateName is provided, return the list of states
+    if (!stateName) {
+      const states = await State.find({}, "stateName");
+      return res.status(200).json({
+        success: true,
+        message: "States fetched successfully",
+        data: states.map((state) => state.stateName),
+      });
+    }
+
+    // If only stateName is provided, return the list of districts for the state
+    if (stateName && !districtName) {
+      const state = await State.findOne({ stateName }, "districts.name");
+      if (!state) {
+        return res.status(404).json({
+          success: false,
+          message: `State '${stateName}' not found`,
+          error: {
+            code: "STATE_NOT_FOUND",
+            description: `No data available for the state '${stateName}'`,
+          },
+        });
+      }
+      return res.status(200).json({
+        success: true,
+        message: `Districts for state '${stateName}' fetched successfully`,
+        data: state.districts.map((district) => district.name),
+      });
+    }
+
+    // If both stateName and districtName are provided, return commodities for that state and district
+    if (stateName && districtName) {
+      const state = await State.findOne({ stateName }, "districts");
+      if (!state) {
+        return res.status(404).json({
+          success: false,
+          message: `State '${stateName}' not found`,
+          error: {
+            code: "STATE_NOT_FOUND",
+            description: `No data available for the state '${stateName}'`,
+          },
+        });
+      }
+
+      const district = state.districts.find((d) => d.name === districtName);
+      if (!district) {
+        return res.status(404).json({
+          success: false,
+          message: `District '${districtName}' not found in state '${stateName}'`,
+          error: {
+            code: "DISTRICT_NOT_FOUND",
+            description: `No data available for the district '${districtName}' in state '${stateName}'`,
+          },
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: `Commodities for district '${districtName}' in state '${stateName}' fetched successfully`,
+        data: district.commodities,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching state, district, or commodity data",
+      error: {
+        code: "STATE_DISTRICT_COMMODITY_FETCH_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};
+
+const updateStateWithMandiData = async (req, res) => {
+  try {
+    const uniqueStates = await MandiPrice.distinct("state");
+
+    for (const stateName of uniqueStates) {
+      const uniqueDistricts = await MandiPrice.distinct("district", {
+        state: stateName,
+      });
+
+      const districtsData = [];
+
+      for (const districtName of uniqueDistricts) {
+        const uniqueCommodities = await MandiPrice.distinct("commodity", {
+          state: stateName,
+          district: districtName,
+        });
+
+        districtsData.push({
+          name: districtName,
+          commodities: uniqueCommodities,
+        });
+      }
+
+      await State.updateOne(
+        { stateName },
+        {
+          stateName,
+          districts: districtsData,
+        },
+        { upsert: true }
+      );
+    }
+
+    res
+      .status(200)
+      .json({ message: "State data updated successfully from MandiPrice" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   fetchAndSaveMandiPrices,
   getMandiPrices,
   getMandiPriceData,
+  getStatesDistrictsCommodities,
+  updateStateWithMandiData,
 };

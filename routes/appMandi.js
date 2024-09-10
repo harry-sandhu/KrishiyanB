@@ -9,5 +9,9 @@ router.post(
 );
 router.get("/mandi/mandi-price-filter", mandiPriceController.getMandiPriceData);
 router.get("/mandi/mandiPrices", mandiPriceController.getMandiPrices);
-
+router.get("/mandi/filter", mandiPriceController.getStatesDistrictsCommodities);
+router.get(
+  "/mandi/update-mandi-data",
+  mandiPriceController.updateStateWithMandiData
+);
 module.exports = router;

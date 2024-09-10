@@ -169,7 +169,8 @@ exports.updateByContactNumber = async (req, res) => {
       incorporationDate, // To update dateOfFpo
       incorporationNumber, // To update IncorportionNumber
       businessLocation, // To update BusinessLocation
-      contactPersonName, // To update promoterName
+      contactPersonName,
+      contactNumberUpadte, // To update promoterName
       yourDesignation,
       Email, // To update yourDesignation
       URL, // To update URL
@@ -196,6 +197,7 @@ exports.updateByContactNumber = async (req, res) => {
     if (incorporationNumber) fpo.IncorportionNumber = incorporationNumber;
     if (businessLocation) fpo.BusinessLocation = businessLocation;
     if (contactPersonName) fpo.promoterName = contactPersonName;
+    if (contactNumberUpadte) fpo.contactNumber = contactNumberUpadte;
     if (yourDesignation) fpo.yourDesignation = yourDesignation;
     if (Email) fpo.organizationalEmail = Email;
     if (URL) fpo.URl = URL;
@@ -215,6 +217,7 @@ exports.updateByContactNumber = async (req, res) => {
       updatedFields.IncorportionNumber = incorporationNumber;
     if (businessLocation) updatedFields.BusinessLocation = businessLocation;
     if (contactPersonName) updatedFields.promoterName = contactPersonName;
+    if (contactNumberUpadte) updatedFields.contactNumber = contactNumberUpadte;
     if (yourDesignation) updatedFields.yourDesignation = yourDesignation;
     if (Email) updatedFields.organizationalEmail = Email;
     if (URL) updatedFields.URL = URL;

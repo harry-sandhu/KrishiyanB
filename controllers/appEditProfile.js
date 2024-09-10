@@ -170,7 +170,8 @@ exports.updateByContactNumber = async (req, res) => {
       incorporationNumber, // To update IncorportionNumber
       businessLocation, // To update BusinessLocation
       contactPersonName, // To update promoterName
-      yourDesignation, // To update yourDesignation
+      yourDesignation,
+      Email, // To update yourDesignation
       URL, // To update URL
     } = req.body;
 
@@ -196,6 +197,7 @@ exports.updateByContactNumber = async (req, res) => {
     if (businessLocation) fpo.BusinessLocation = businessLocation;
     if (contactPersonName) fpo.promoterName = contactPersonName;
     if (yourDesignation) fpo.yourDesignation = yourDesignation;
+    if (Email) fpo.organizationalEmail = Email;
     if (URL) fpo.URl = URL;
 
     // Save the updated FPO organization
@@ -214,6 +216,7 @@ exports.updateByContactNumber = async (req, res) => {
     if (businessLocation) updatedFields.BusinessLocation = businessLocation;
     if (contactPersonName) updatedFields.promoterName = contactPersonName;
     if (yourDesignation) updatedFields.yourDesignation = yourDesignation;
+    if (Email) updatedFields.organizationalEmail = Email;
     if (URL) updatedFields.URL = URL;
 
     res.status(200).send({
@@ -265,6 +268,7 @@ exports.getByContactNumber = async (req, res) => {
         contactPersonName: fpo.promoterName,
         yourDesignation: fpo.yourDesignation,
         URL: fpo.URl,
+        Email: fpo.organizationalEmail,
         contactNumber: fpo.contactNumber,
       },
     };

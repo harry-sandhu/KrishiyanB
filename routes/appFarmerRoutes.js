@@ -7,7 +7,8 @@ router.post("/crop/register", farmerController.registerCropCultivation);
 
 // Route to get all crop cultivation data
 router.get("/crop", farmerController.getCropCultivations);
-
+// PUT request to update a crop cultivation by _id
+router.put("/crops/:_id", farmerController.updateCropCultivation);
 // Route to get crop cultivation data by Fid
 router.get("/:fid", farmerController.getCropCultivationByFid);
 // Route for farmer registration

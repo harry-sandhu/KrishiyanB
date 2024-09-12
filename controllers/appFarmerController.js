@@ -661,3 +661,58 @@ exports.updateFarmerByWhatsapp = async (req, res) => {
     });
   }
 };
+
+// Update Crop Cultivation Data by _id
+exports.updateCropCultivation = async (req, res) => {
+  try {
+    const { _id } = req.params;
+
+    const {
+      farmerName,
+      crops,
+      variety,
+      dateOfSowing,
+      geolocation,
+      typeOfCultivationPractice,
+      areaInAcres,
+      geoLinkAreaOnMap,
+    } = req.body;
+
+    const cropCultivation = await CropCultivation.findById(_id);
+
+    if (!cropCultivation) {
+      return res.status(404).send({
+        success: false,
+        message: "Crop Cultivation data not found",
+      });
+    }
+
+    cropCultivation.farmerName = farmerName || cropCultivation.farmerName;
+    cropCultivation.crops = crops || cropCultivation.crops;
+    cropCultivation.variety = variety || cropCultivation.variety;
+    cropCultivation.dateOfSowing = dateOfSowing || cropCultivation.dateOfSowing;
+    cropCultivation.geolocation = geolocation || cropCultivation.geolocation;
+    cropCultivation.typeOfCultivationPractice =
+      typeOfCultivationPractice || cropCultivation.typeOfCultivationPractice;
+    cropCultivation.areaInAcres = areaInAcres || cropCultivation.areaInAcres;
+    cropCultivation.geoLinkAreaOnMap =
+      geoLinkAreaOnMap || cropCultivation.geoLinkAreaOnMap;
+
+    await cropCultivation.save();
+
+    res.status(200).send({
+      success: true,
+      message: "Crop Cultivation data updated successfully",
+      data: cropCultivation,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Error updating Crop Cultivation data",
+      error: {
+        code: "CROP_CULTIVATION_UPDATE_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};

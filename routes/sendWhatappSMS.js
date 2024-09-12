@@ -2,14 +2,14 @@
 const express = require("express");
 const router = express.Router();
 const OTP = require("../models/Otp");
-const axios = require("axios"); // Use axios instead of node-fetch
+const axios = require("axios"); 
 
-// Helper function to generate a random OTP
+
 const generateOtp = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-// Route to send OTP
+
 router.post("/send-otp", async (req, res) => {
   const { phoneNumber } = req.body;
 
@@ -17,7 +17,7 @@ router.post("/send-otp", async (req, res) => {
     return res.status(400).json({ error: "Phone number is required" });
   }
 
-  // Generate a new OTP
+  
   const otp = generateOtp();
 
   const options = {
@@ -35,12 +35,12 @@ router.post("/send-otp", async (req, res) => {
   };
 
   try {
-    // Send OTP using external API
+    
     const response = await axios(options);
     const data = response.data;
 
     if (response.status === 200) {
-      // Save OTP to the database
+    
       const otpEntry = new OTP({ phoneNumber, otp });
       await otpEntry.save();
 

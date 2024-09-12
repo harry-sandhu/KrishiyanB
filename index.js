@@ -71,6 +71,7 @@ app.use("/api", require("./routes/MandiPrices.js"));
 app.use("/api", require("./routes/DataModel.js"));
 
 //App routes
+
 app.use("/api", require("./routes/fpoRoutes"));
 app.use("/api/appFarmer", require("./routes/appFarmerRoutes.js"));
 app.use("/api", require("./routes/appEditaddress.js"));

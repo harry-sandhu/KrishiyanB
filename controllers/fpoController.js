@@ -251,3 +251,33 @@ exports.resetPassword = async (req, res) => {
     });
   }
 };
+
+exports.checkContactNumber = async (req, res) => {
+  try {
+    const { contactNumber } = req.params;
+
+    const fpoOrganization = await FpoOrganization.findOne({ contactNumber });
+
+    if (fpoOrganization) {
+      return res.status(200).send({
+        success: true,
+        message: "Contact number exists",
+        data: fpoOrganization.contactNumber,
+      });
+    } else {
+      return res.status(404).send({
+        success: false,
+        message: "Contact number does not exist",
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({
+      success: false,
+      message: "Error checking contact number",
+      error: {
+        code: "CONTACT_CHECK_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};

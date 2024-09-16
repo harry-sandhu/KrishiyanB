@@ -13,5 +13,6 @@ router.get("/fpo/:id", fpoController.getFpoById);
 router.patch("/fpo/:id", fpoController.updateFpoById);
 
 router.delete("/fpo/:id", fpoController.deleteFpoById);
+router.get("/check-contact/:contactNumber", fpoController.checkContactNumber);
 
 module.exports = router;

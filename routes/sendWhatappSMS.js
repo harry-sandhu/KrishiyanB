@@ -1,62 +1,8 @@
-// routes/otpRoutes.js
 const express = require("express");
 const router = express.Router();
-const OTP = require("../models/Otp");
-const axios = require("axios"); 
+const otpController = require("../controllers/Whatsappsms");
 
-
-const generateOtp = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-};
-
-
-router.post("/send-otp", async (req, res) => {
-  const { phoneNumber } = req.body;
-
-  if (!phoneNumber) {
-    return res.status(400).json({ error: "Phone number is required" });
-  }
-
-  
-  const otp = generateOtp();
-
-  const options = {
-    method: "POST",
-    headers: {
-      clientId: "MPF3JA7NMQY3XUAF3MHYC5EZVH418FGV",
-      clientSecret: "0yrogpuf0x1zhfm0t5mnp5kpg85zgxgy",
-      "Content-Type": "application/json",
-    },
-    data: {
-      phoneNumber,
-      message: `Your OTP is ${otp}`,
-    },
-    url: "https://marketing.otpless.app/v1/api/send",
-  };
-
-  try {
-    
-    const response = await axios(options);
-    const data = response.data;
-
-    if (response.status === 200) {
-    
-      const otpEntry = new OTP({ phoneNumber, otp });
-      await otpEntry.save();
-
-      console.log("OTP entry saved:", otpEntry);
-      return res
-        .status(200)
-        .json({ message: "OTP sent and saved successfully" });
-    } else {
-      return res
-        .status(response.status)
-        .json({ error: data.error || "Failed to send OTP" });
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-});
+// Route to handle OTP generation and sending
+router.post("/send-otp", otpController.sendOtp);
 
 module.exports = router;

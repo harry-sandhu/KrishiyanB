@@ -79,3 +79,48 @@ exports.sendOtp = async (req, res) => {
     });
   }
 };
+
+exports.checkOtp = async (req, res) => {
+  const { phoneNumber, otp } = req.body;
+
+  if (!phoneNumber || !otp) {
+    return res.status(400).json({
+      success: false,
+      message: "Phone number and OTP are required",
+      error: {
+        code: "MISSING_PARAMETERS",
+        description: "Please provide both phone number and OTP.",
+      },
+    });
+  }
+
+  try {
+    const otpEntry = await Otp.findOne({ phoneNumber, otp });
+
+    if (otpEntry) {
+      return res.status(200).json({
+        success: true,
+        message: "Yes, otp exists",
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "No, it does not exist",
+        error: {
+          code: "NOT_FOUND",
+          description:
+            "The provided phone number and OTP combination does not exist.",
+        },
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: {
+        code: "SERVER_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};

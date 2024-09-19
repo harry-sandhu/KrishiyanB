@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const CommoditySchema = new mongoose.Schema({
   uid: {
     type: String,
-    required: true, // UID is required
+    required: true,
   },
   operation: {
     type: String,
@@ -15,7 +15,7 @@ const CommoditySchema = new mongoose.Schema({
     type: String,
   },
   quantity: {
-    type: Number,
+    type: String,
   },
   moisture: {
     type: String,
@@ -50,7 +50,7 @@ const CommoditySchema = new mongoose.Schema({
   },
   verified: {
     type: Boolean,
-    default: false, // Default value for verified is false
+    default: false,
   },
 });
 

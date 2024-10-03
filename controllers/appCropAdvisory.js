@@ -1,9 +1,26 @@
 const Crop = require("../models/crop");
 
-// Get all crop names
+const Varities = require("../models/varities");
+
+exports.getVarityByLocalName = async (req, res) => {
+  try {
+    const { cropId } = req.params;
+
+    const varity = await Varities.findOne({ cropId });
+
+    if (!varity) {
+      return res.status(404).json({ message: "Varity not found" });
+    }
+
+    return res.status(200).json(varity);
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching data", error });
+  }
+};
+
 exports.getAllCropNames = async (req, res) => {
   try {
-    const crops = await Crop.find().select("localName"); // Fetch all local names only
+    const crops = await Crop.find().select("localName");
     const cropNames = crops.map((crop) => crop.localName);
 
     res.status(200).send({

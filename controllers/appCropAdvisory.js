@@ -10,22 +10,36 @@ exports.getVarityByLocalName = async (req, res) => {
     const crop = await Crop.findOne({ localName });
 
     if (!crop) {
-      return res.status(404).json({ message: "Crop not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Crop not found",
+        data: null,
+      });
     }
 
     // Step 2: Use the crop _id to search for varieties in Varities collection
     const varities = await Varities.find({ cropId: crop._id });
 
     if (!varities || varities.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No varieties found for this crop" });
+      return res.status(404).json({
+        success: false,
+        message: "No varieties found for this crop",
+        data: null,
+      });
     }
 
-    // Step 3: Return the found varieties
-    return res.status(200).json(varities);
+    // Step 3: Return the found varieties in the desired response format
+    return res.status(200).json({
+      success: true,
+      message: "Varieties retrieved successfully",
+      data: varities,
+    });
   } catch (error) {
-    return res.status(500).json({ message: "Error fetching data", error });
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching data",
+      error: error.message,
+    });
   }
 };
 

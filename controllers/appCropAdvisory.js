@@ -66,70 +66,32 @@ exports.getAllCropNames = async (req, res) => {
   }
 };
 
-// Get detailed information based on crop name
 exports.getCropDetailsByName = async (req, res) => {
   const { name } = req.params;
-  console.log("Searching for crop with name:", name);
 
   try {
-    // Fetch crop with case-insensitive name
     const crop = await Crop.findOne({
       localName: new RegExp(`^${name}$`, "i"),
     });
 
     if (!crop) {
-      return res.status(404).send({
+      return res.status(404).json({
         success: false,
         message: "Crop not found",
-        error: {
-          code: "CROP_NOT_FOUND",
-          description: `No crop found with the name: ${name}`,
-        },
+        data: null,
       });
     }
 
-    // Split the nutrient data into nutrient management and deficiency symptom
-    const nutrientManagement = crop.nutrient.filter(
-      (item) => !item.deficiency?.Notable_Symptoms
-    );
-    const deficiencySymptom = crop.nutrient.filter(
-      (item) => item.deficiency?.Notable_Symptoms
-    );
-
-    // Construct the response object
-    const responseData = {
-      localName: crop.localName,
-      scientificName: crop.scientificName,
-      description: crop.description,
-      createdAt: crop.createdAt,
-      updatedAt: crop.updatedAt,
-      stages: crop.stages,
-      generalInformation: crop.generalInformation,
-      presowingPractices: crop.presowingPractices,
-      nutrientManagement: nutrientManagement, // Items without deficiency
-      pestManagement: crop.pestManagement,
-      diseaseManagement: crop.diseaseManagement,
-      deficiencySymptom: deficiencySymptom, // Items with deficiency
-      weedManagement: crop.weedManagement,
-      weatherInjuries: crop.weatherInjuries,
-      irrigation: crop.newHarvest,
-      faq: crop.faq,
-    };
-
-    res.status(200).send({
+    res.status(200).json({
       success: true,
-      message: "Crop found successfully",
-      data: responseData,
+      message: "Crop details retrieved successfully",
+      data: crop,
     });
   } catch (error) {
     console.error("Error fetching crop details:", error);
-    res.status(500).send({
+    res.status(500).json({
       success: false,
-      message: "Error fetching crop details",
-      error: {
-        code: "CROP_FETCH_ERROR",
-        description: error.message,
-      },
+      message: "Server error",
     });
   }
 };

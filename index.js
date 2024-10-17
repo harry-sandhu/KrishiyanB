@@ -84,6 +84,7 @@ app.use("/api", require("./routes/appCropRoutes.js"));
 app.use("/api", require("./routes/appVerifyDetails.js"));
 app.use("/api", require("./routes/appNews.js"));
 app.use("/api", require("./routes/appInsightData.js"));
+app.use("/api/appData", require("./routes/appMarketInsight.js"));
 app.use("/api/whatsapp", require("./routes/sendWhatappSMS.js"));
 app.get("/api/ping", (req, res) => {
   res.send("pong");

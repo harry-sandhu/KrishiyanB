@@ -86,10 +86,10 @@ exports.checkOtp = async (req, res) => {
   if (!phoneNumber || !otp) {
     return res.status(400).json({
       success: false,
-      message: "Email and OTP are required",
+      message: "Phone number and OTP are required",
       error: {
         code: "MISSING_PARAMETERS",
-        description: "Please provide both Email and OTP.",
+        description: "Please provide both phone number and OTP.",
       },
     });
   }
@@ -131,10 +131,10 @@ exports.checkOtpEmail = async (req, res) => {
   if (!Email || !otp) {
     return res.status(400).json({
       success: false,
-      message: "Phone number and OTP are required",
+      message: "Email and OTP are required",
       error: {
         code: "MISSING_PARAMETERS",
-        description: "Please provide both phone number and OTP.",
+        description: "Please provide both Email and OTP.",
       },
     });
   }
@@ -153,8 +153,7 @@ exports.checkOtpEmail = async (req, res) => {
         message: "No, it does not exist",
         error: {
           code: "NOT_FOUND",
-          description:
-            "The provided phone number and OTP combination does not exist.",
+          description: "The provided Email and OTP combination does not exist.",
         },
       });
     }

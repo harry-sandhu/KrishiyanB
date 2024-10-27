@@ -86,6 +86,51 @@ exports.checkOtp = async (req, res) => {
   if (!phoneNumber || !otp) {
     return res.status(400).json({
       success: false,
+      message: "Email and OTP are required",
+      error: {
+        code: "MISSING_PARAMETERS",
+        description: "Please provide both Email and OTP.",
+      },
+    });
+  }
+
+  try {
+    const otpEntry = await Otp.findOne({ phoneNumber, otp });
+
+    if (otpEntry) {
+      return res.status(200).json({
+        success: true,
+        message: "Yes, otp exists",
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "No, it does not exist",
+        error: {
+          code: "NOT_FOUND",
+          description:
+            "The provided phone number and OTP combination does not exist.",
+        },
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: {
+        code: "SERVER_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};
+
+exports.checkOtpEmail = async (req, res) => {
+  const { Email, otp } = req.body;
+
+  if (!Email || !otp) {
+    return res.status(400).json({
+      success: false,
       message: "Phone number and OTP are required",
       error: {
         code: "MISSING_PARAMETERS",
@@ -95,7 +140,7 @@ exports.checkOtp = async (req, res) => {
   }
 
   try {
-    const otpEntry = await Otp.findOne({ phoneNumber, otp });
+    const otpEntry = await Otp.findOne({ phoneNumber: Email, otp });
 
     if (otpEntry) {
       return res.status(200).json({

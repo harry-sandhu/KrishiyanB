@@ -22,4 +22,13 @@ router.get(
   "/fpoOrganization/contact/:contactNumber",
   fpoOrganizationController.getProfileByContactNumber
 );
+
+// Route to get FPO data based on type of organization
+router.get(
+  "/organization/:typeOfOrganization",
+  fpoOrganizationController.getFpoByTypeOfOrganization
+);
+
+// Route to get FPO data based on type of FPO
+router.get("/fpo-type/:typeOfFpo", fpoOrganizationController.getFpoByTypeOfFpo);
 module.exports = router;

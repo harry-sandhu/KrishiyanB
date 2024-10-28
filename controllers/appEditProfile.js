@@ -288,3 +288,73 @@ exports.getByContactNumber = async (req, res) => {
     });
   }
 };
+
+// Get FPO data based on type of organization
+exports.getFpoByTypeOfOrganization = async (req, res) => {
+  try {
+    const { typeOfOrganization } = req.params;
+    const fpoData = await FpoOrganization.find({ typeOfOrganization });
+
+    if (fpoData.length === 0) {
+      return res.status(404).send({
+        success: false,
+        message: "No Entity found for the specified type of organization",
+        error: {
+          code: "FPO_TYPE_ORG_NOT_FOUND",
+          description: `No Entity found with type of organization: ${typeOfOrganization}`,
+        },
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      message: "Entity data retrieved successfully",
+      data: fpoData,
+    });
+  } catch (error) {
+    console.error("Error retrieving ENTITY data:", error);
+    res.status(500).send({
+      success: false,
+      message: "Error retrieving ENTITY data",
+      error: {
+        code: "ENTITY_ORGANIZATION_RETRIEVAL_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};
+
+// Get FPO data based on type of FPO
+exports.getFpoByTypeOfFpo = async (req, res) => {
+  try {
+    const { typeOfFpo } = req.params;
+    const fpoData = await FpoOrganization.find({ typeOfFpo });
+
+    if (fpoData.length === 0) {
+      return res.status(404).send({
+        success: false,
+        message: "No entity found for the specified type of entity",
+        error: {
+          code: "ENTITY_TYPE_ENTITY_NOT_FOUND",
+          description: `No Entity found with type of entity: ${typeOfFpo}`,
+        },
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      message: "Entity data retrieved successfully",
+      data: fpoData,
+    });
+  } catch (error) {
+    console.error("Error retrieving Entity data:", error);
+    res.status(500).send({
+      success: false,
+      message: "Error retrieving Entity data",
+      error: {
+        code: "ENTITY_TYPE_ENTITY_RETRIEVAL_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};

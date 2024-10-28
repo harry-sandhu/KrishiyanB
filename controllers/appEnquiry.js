@@ -369,3 +369,38 @@ exports.getCommoditiesByUidOperationCommodity = async (req, res) => {
     });
   }
 };
+
+// Delete an enquiry by uid
+exports.deleteEnquiryByUid = async (req, res) => {
+  try {
+    const { uid } = req.params;
+
+    const deletedEnquiry = await Commodity.findOneAndDelete({ uid });
+
+    if (!deletedEnquiry) {
+      return res.status(404).send({
+        success: false,
+        message: "Enquiry not found",
+        error: {
+          code: "ENQUIRY_NOT_FOUND",
+          description: `No enquiry found with uid: ${uid}`,
+        },
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      message: "Enquiry deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting enquiry:", error);
+    res.status(500).send({
+      success: false,
+      message: "Error deleting enquiry",
+      error: {
+        code: "ENQUIRY_DELETION_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};

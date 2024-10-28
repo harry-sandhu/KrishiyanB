@@ -22,15 +22,16 @@ router.get(
   commodityController.getCommoditiesByValue
 );
 
-// Define a route to get commodities by uid, commodity, and optional operation
 router.get(
   "/commodities/:uid/:commodity",
   commodityController.getCommoditiesByUidOperationCommodity
 );
 
-// Route for updating the verified status of a commodity
 router.patch(
   "/commodity/:uid/verified",
   commodityController.updateVerifiedStatus
 );
+
+router.delete("/commodity/delete/:uid", commodityController.deleteEnquiryByUid);
+
 module.exports = router;

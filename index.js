@@ -1,4 +1,9 @@
 const sendSMS = require("./routes/sendsms");
+const { uploadFile, getFile } = require("./controllers/appimage");
+const multer = require("multer");
+const fs = require("fs").promises;
+const util = require("util");
+const unlinkFile = util.promisify(fs.unlink);
 const sendWhatsappSMS = require("./routes/sendWhatappSMS.js");
 const express = require("express");
 const app = express();
@@ -37,6 +42,10 @@ app.use("*/role-admin/*", tokenAuth, adminAuthorizer);
 app.use("*/role-superAdmin/*", tokenAuth, superAdminAuthorizer);
 app.use("/api/check-admin", tokenAuth, adminAuthorizer); // for frontend check
 app.use("/api/check-superAdmin", tokenAuth, superAdminAuthorizer); // for frontend check
+
+//multer logic
+
+const upload = multer({ dest: "uploads/" });
 
 //Routes
 app.get("/", (req, res) => {
@@ -86,6 +95,47 @@ app.use("/api", require("./routes/appNews.js"));
 app.use("/api", require("./routes/appInsightData.js"));
 app.use("/api/appData", require("./routes/appMarketInsight.js"));
 app.use("/api/whatsapp", require("./routes/sendWhatappSMS.js"));
+app.post("/api/upload", upload.single("image"), async (req, res) => {
+  const file = req.file;
+
+  if (!file) {
+    return res.status(400).send("File not found");
+  }
+
+  try {
+    const result = await uploadFile(file);
+    console.log("result", result);
+    await fs.unlink(file.path);
+    res.send(result);
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    res.status(500).send("Error uploading file");
+  }
+});
+app.get("/images/:key", async (req, res, next) => {
+  const key = req.params.key;
+  console.log("key", key);
+  try {
+    const result = await getFile(key);
+    result.pipe(res);
+  } catch (error) {
+    if (error.code === "NoSuchKey") {
+      // Handle the specific 'NoSuchKey' error
+      console.error("File not found:", error);
+      return res.status(404).send({ message: "File not found" });
+    } else {
+      // Handle other errors
+      console.error("Error downloading file:", error);
+      return next(error); // Pass to error handling middleware
+    }
+  }
+});
+
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err);
+  res.status(500).send({ message: err.message || "Internal Server Error" });
+});
+
 app.get("/api/ping", (req, res) => {
   res.send("pong");
 });

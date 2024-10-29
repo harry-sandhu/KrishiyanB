@@ -40,7 +40,7 @@ function uploadFile(file) {
 }
 
 // Download function
-async function getFile(key) {
+async function getFile(key, res) {
   console.log("Key for file retrieval:", key);
   const downloadParams = {
     Bucket: bucketName,
@@ -48,11 +48,17 @@ async function getFile(key) {
   };
 
   try {
-    const data = await s3.getObject(downloadParams).promise(); // Use promise-based method for consistency
-    return data.Body; // Return the file's body (Buffer)
+    const s3Object = await s3.getObject(downloadParams).promise();
+
+    // Set the appropriate content type for the image
+    res.set("Content-Type", s3Object.ContentType);
+    res.set("Content-Disposition", "inline"); // To display in the browser or Postman
+
+    // Send the image buffer as the response
+    res.status(200).send(s3Object.Body);
   } catch (error) {
     console.error("Error fetching file:", error);
-    throw new Error("File retrieval failed");
+    res.status(500).json({ message: error.message });
   }
 }
 

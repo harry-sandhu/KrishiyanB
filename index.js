@@ -113,23 +113,9 @@ app.post("/api/upload", upload.single("image"), async (req, res) => {
     res.status(500).send("Error uploading file");
   }
 });
-app.get("/images/:key", async (req, res, next) => {
-  const key = req.params.key;
-  console.log("key", key);
-  try {
-    const result = await getFile(key);
-    result.pipe(res);
-  } catch (error) {
-    if (error.code === "NoSuchKey") {
-      // Handle the specific 'NoSuchKey' error
-      console.error("File not found:", error);
-      return res.status(404).send({ message: "File not found" });
-    } else {
-      // Handle other errors
-      console.error("Error downloading file:", error);
-      return next(error); // Pass to error handling middleware
-    }
-  }
+app.get("/images/:key", async (req, res) => {
+  const fileKey = req.params.key; // Get the file key from the request parameters
+  await getFile(fileKey, res); // Call getFile and pass the response object
 });
 
 app.use((err, req, res, next) => {

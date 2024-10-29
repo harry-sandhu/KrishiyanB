@@ -45,7 +45,7 @@ app.use("/api/check-superAdmin", tokenAuth, superAdminAuthorizer); // for fronte
 
 //multer logic
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ storage: multer.memoryStorage() });
 
 //Routes
 app.get("/", (req, res) => {
@@ -97,6 +97,7 @@ app.use("/api/appData", require("./routes/appMarketInsight.js"));
 app.use("/api/whatsapp", require("./routes/sendWhatappSMS.js"));
 app.post("/api/upload", upload.single("image"), async (req, res) => {
   const file = req.file;
+  console.log("file", file);
 
   if (!file) {
     return res.status(400).send("File not found");
@@ -105,7 +106,7 @@ app.post("/api/upload", upload.single("image"), async (req, res) => {
   try {
     const result = await uploadFile(file);
     console.log("result", result);
-    await fs.unlink(file.path);
+
     res.send(result);
   } catch (error) {
     console.error("Error uploading file:", error);

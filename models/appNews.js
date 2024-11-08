@@ -13,7 +13,6 @@ const newsSchema = new mongoose.Schema({
   },
   imageURL: {
     type: String,
-    required: true,
   },
   priority: {
     type: Number,

@@ -51,7 +51,7 @@ async function getFile(key, res) {
     const s3Object = await s3.getObject(downloadParams).promise();
 
     // Set the appropriate content type for the image
-    res.set("Content-Type", s3Object.ContentType);
+    res.set("Content-Type", "image/jpeg"); // Change to image/png if the image is a PNG
     res.set("Content-Disposition", "inline"); // To display in the browser or Postman
 
     // Send the image buffer as the response

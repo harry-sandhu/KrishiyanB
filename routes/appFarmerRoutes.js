@@ -28,10 +28,7 @@ router.get("/villages/:dealerNumber", farmerController.getVillagesByDealer);
 
 router.get("/crops/:dealerNumber", farmerController.getCropsByDealerNumber);
 // Route to get farmers based on dealer number, village, and crop
-router.get(
-  "/farmers/:dealerNumber/:village?/:crop",
-  farmerController.getFarmersByCriteria
-);
+router.get("/farmers/insight", farmerController.getFarmersByCriteria);
 
 // Route to get farmers based on type of cultivation practice and dealer number
 router.get(

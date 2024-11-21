@@ -21,15 +21,12 @@ const appFarmerSchema = new mongoose.Schema(
     },
     geoLocationOwnedFarm: {
       type: String,
-      required: true,
     },
     totalLeaseFarm: {
       type: Number,
-      required: true,
     },
     geoLocationLeaseFarm: {
       type: String,
-      required: true,
     },
     pincode: {
       type: String,
@@ -49,7 +46,6 @@ const appFarmerSchema = new mongoose.Schema(
     },
     address: {
       type: String,
-      required: true,
     },
     typeOfCultivationPractice: {
       type: String,
@@ -57,27 +53,21 @@ const appFarmerSchema = new mongoose.Schema(
     },
     bankName: {
       type: String,
-      required: true,
     },
     accountName: {
       type: String,
-      required: true,
     },
     accountNumber: {
       type: String,
-      required: true,
     },
     ifscCode: {
       type: String,
-      required: true,
     },
     pan: {
       type: String,
-      required: true,
     },
     aadhaarNumber: {
       type: String,
-      required: true,
     },
   },
   { timestamps: true }

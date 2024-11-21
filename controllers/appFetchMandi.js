@@ -238,7 +238,7 @@ const updateStateWithMandiData = async (req, res) => {
       });
 
       const districtsData = [];
-
+      console.log("uniqueDistricts", uniqueDistricts);
       for (const districtName of uniqueDistricts) {
         const uniqueCommodities = await MandiPrice.distinct("commodity", {
           state: stateName,

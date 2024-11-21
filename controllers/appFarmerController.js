@@ -161,17 +161,13 @@ exports.getFarmerDataByDealer = async (req, res) => {
       });
     }
 
-    // Array to hold the combined farmer + crop cultivation data
     let response = [];
 
-    // Iterate over each farmer and use whatsappNumber as fid to find crop cultivation data
     for (const farmer of farmers) {
-      // Use the farmer's whatsappNumber as the fid to query CropCultivation
       const cropData = await CropCultivation.find({
         fid: farmer.whatsappNumber,
       });
 
-      // Combine the farmer's details with their crop cultivation data
       response.push({
         farmerDetails: farmer,
         cropCultivationDetails: cropData.length
@@ -180,7 +176,6 @@ exports.getFarmerDataByDealer = async (req, res) => {
       });
     }
 
-    // Send response with combined farmer and crop data
     res.status(200).send({
       success: true,
       message:

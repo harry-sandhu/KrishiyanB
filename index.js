@@ -76,7 +76,7 @@ app.use("/api", require("./routes/popup.js"));
 app.use("/api", require("./routes/emailsender.js"));
 app.use("/api/farmers", require("./routes/farmerR.js"));
 app.use("/api", require("./routes/Weather.js"));
-app.use("/api", require("./routes/MandiPrices.js"));
+app.use("/api/me", require("./routes/MandiPrices.js"));
 app.use("/api", require("./routes/DataModel.js"));
 
 //App routes

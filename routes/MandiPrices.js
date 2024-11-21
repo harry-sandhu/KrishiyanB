@@ -62,7 +62,7 @@ router.get("/mandi-prices", async (req, res) => {
   }
 });
 
-router.get("/fetch-and-store-data", async (req, res) => {
+router.get("/file/fetch-and-store-data", async (req, res) => {
   try {
     await fetchDataAndStoreInDB();
 

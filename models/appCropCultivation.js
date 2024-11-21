@@ -19,7 +19,6 @@ const CropCultivationSchema = new mongoose.Schema({
   },
   variety: {
     type: String,
-    required: true,
   },
   dateOfSowing: {
     type: Date,
@@ -27,7 +26,6 @@ const CropCultivationSchema = new mongoose.Schema({
   },
   geolocation: {
     type: String,
-    required: true,
   },
   typeOfCultivationPractice: {
     type: String,
@@ -39,7 +37,6 @@ const CropCultivationSchema = new mongoose.Schema({
   },
   geoLinkAreaOnMap: {
     type: String,
-    required: true,
   },
 });
 

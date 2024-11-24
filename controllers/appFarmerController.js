@@ -425,7 +425,7 @@ exports.getFarmersByCriteria = async (req, res) => {
     }
 
     const farmers = await appFarmer.find(farmersQuery).exec();
-    const farmerIds = farmers.map((farmer) => farmer._id.toString());
+    const farmerIds = farmers.map((farmer) => farmer.whatsappNumber);
 
     if (farmerIds.length === 0) {
       return res.status(404).send({
@@ -439,8 +439,8 @@ exports.getFarmersByCriteria = async (req, res) => {
       crops: crop,
     }).exec();
 
-    const cropCultivationFids = cropCultivations.map((cultivation) =>
-      cultivation.fid.toString()
+    const cropCultivationFids = cropCultivations.map(
+      (cultivation) => cultivation.fid
     );
 
     if (cropCultivationFids.length === 0) {
@@ -455,7 +455,7 @@ exports.getFarmersByCriteria = async (req, res) => {
       cropCultivationFids.includes(id)
     );
     const intersectedFarmers = farmers.filter((farmer) =>
-      intersectedFarmerIds.includes(farmer._id.toString())
+      intersectedFarmerIds.includes(farmer.whatsappNumber)
     );
 
     if (intersectedFarmers.length === 0) {
@@ -470,7 +470,7 @@ exports.getFarmersByCriteria = async (req, res) => {
 
     for (const farmer of intersectedFarmers) {
       const farmerCultivations = cropCultivations.filter(
-        (cultivation) => cultivation.fid.toString() === farmer._id.toString()
+        (cultivation) => cultivation.fid.toString() === farmer.whatsappNumber
       );
 
       let expectedYield = 0;

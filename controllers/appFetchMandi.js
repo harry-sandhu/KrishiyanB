@@ -50,20 +50,20 @@ const getMandiPrices = async (req, res) => {
   try {
     const { state, district, commodity, initialDate, finalDate } = req.query;
 
-    // Ensure that dates are in the format "DD/MM/YYYY"
-    const formattedInitialDate = initialDate; // Assumed format is DD/MM/YYYY
-    const formattedFinalDate = finalDate; // Assumed format is DD/MM/YYYY
+    // Convert initialDate and finalDate to YYYY-MM-DD format
+    const formattedInitialDate = initialDate.split("/").reverse().join("-"); // DD/MM/YYYY -> YYYY-MM-DD
+    const formattedFinalDate = finalDate.split("/").reverse().join("-"); // DD/MM/YYYY -> YYYY-MM-DD
 
-    // Fetch all relevant data based on state, district, and commodity
+    // Fetch all relevant data from the database
     const allData = await MandiPrice.find({
       state: state,
       district: district,
       commodity: commodity,
     });
 
-    // Filter data manually based on arrival_date
+    // Filter manually by converting each arrival_date to YYYY-MM-DD
     const filteredData = allData.filter((item) => {
-      const arrivalDate = item.arrival_date;
+      const arrivalDate = item.arrival_date.split("/").reverse().join("-"); // Convert to YYYY-MM-DD
       return (
         arrivalDate >= formattedInitialDate && arrivalDate <= formattedFinalDate
       );

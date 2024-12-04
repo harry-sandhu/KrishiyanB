@@ -49,6 +49,7 @@ const FpoOrganizationSchema = new mongoose.Schema({
   },
   URl: {
     type: String,
+    default: " ",
   },
 });
 

@@ -7,15 +7,18 @@ const CommoditySchema = new mongoose.Schema({
   },
   operation: {
     type: String,
+    required: true,
   },
   commodity: {
     type: String,
+    required: true,
   },
   variety: {
     type: String,
   },
   quantity: {
     type: String,
+    required: true,
   },
   moisture: {
     type: String,
@@ -31,6 +34,7 @@ const CommoditySchema = new mongoose.Schema({
   },
   price: {
     type: Number,
+    required: true,
   },
   date: {
     type: Date,
@@ -44,6 +48,7 @@ const CommoditySchema = new mongoose.Schema({
   },
   photoVideoLink: {
     type: String,
+    required: true,
   },
   comments: {
     type: String,

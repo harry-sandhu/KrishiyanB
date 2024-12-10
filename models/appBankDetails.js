@@ -4,7 +4,7 @@ const BankDetailsSchema = new mongoose.Schema({
   uid: {
     type: String,
     required: true,
-    unique: true, // Ensure UID is unique
+    unique: true,
   },
   bankName: {
     type: String,
@@ -18,6 +18,10 @@ const BankDetailsSchema = new mongoose.Schema({
   ifscCode: {
     type: String,
     required: true,
+  },
+  URL: {
+    type: String,
+    default: " ",
   },
 });
 

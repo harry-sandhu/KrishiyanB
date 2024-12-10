@@ -3,7 +3,8 @@ const BankDetails = require("../models/appBankDetails");
 // Create or Update Bank Details
 exports.createOrUpdateBankDetails = async (req, res) => {
   try {
-    const { uid, bankName, accountName, accountNumber, ifscCode } = req.body;
+    const { uid, bankName, accountName, accountNumber, ifscCode, URL } =
+      req.body;
 
     if (!uid) {
       return res.status(400).send({
@@ -18,7 +19,7 @@ exports.createOrUpdateBankDetails = async (req, res) => {
 
     let bankDetailsEntry = await BankDetails.findOneAndUpdate(
       { uid },
-      { bankName, accountName, accountNumber, ifscCode },
+      { bankName, accountName, accountNumber, ifscCode, URL },
       { new: true, upsert: true }
     );
 

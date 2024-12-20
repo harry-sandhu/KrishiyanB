@@ -154,7 +154,6 @@ const getStatesDistrictsCommodities = async (req, res) => {
   const { stateName, districtName } = req.query;
 
   try {
-    // If no stateName is provided, return the list of states
     if (!stateName) {
       const states = await State.find({}, "stateName");
       return res.status(200).json({
@@ -227,6 +226,49 @@ const getStatesDistrictsCommodities = async (req, res) => {
     });
   }
 };
+const getStatesDistricts = async (req, res) => {
+  const { stateName, districtName } = req.query;
+
+  try {
+    if (!stateName) {
+      const states = await State.find({}, "stateName");
+      return res.status(200).json({
+        success: true,
+        message: "States fetched successfully",
+        data: states.map((state) => state.stateName),
+      });
+    }
+
+    // If only stateName is provided, return the list of districts for the state
+    if (stateName && !districtName) {
+      const state = await State.findOne({ stateName }, "districts.name");
+      if (!state) {
+        return res.status(404).json({
+          success: false,
+          message: `State '${stateName}' not found`,
+          error: {
+            code: "STATE_NOT_FOUND",
+            description: `No data available for the state '${stateName}'`,
+          },
+        });
+      }
+      return res.status(200).json({
+        success: true,
+        message: `Districts for state '${stateName}' fetched successfully`,
+        data: state.districts.map((district) => district.name),
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching state, district data",
+      error: {
+        code: "STATE_DISTRICT_COMMODITY_FETCH_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};
 
 const updateStateWithMandiData = async (req, res) => {
   try {
@@ -275,4 +317,5 @@ module.exports = {
   getMandiPriceData,
   getStatesDistrictsCommodities,
   updateStateWithMandiData,
+  getStatesDistricts,
 };

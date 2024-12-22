@@ -10,5 +10,6 @@ router.post(
   "/generate-market-prices",
   marketPriceController.generateMarketPriceData
 );
+router.get("/:id", marketPriceController.getMarketPriceById);
 
 module.exports = router;

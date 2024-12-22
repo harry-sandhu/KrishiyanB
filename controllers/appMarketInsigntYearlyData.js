@@ -157,8 +157,56 @@ const generateMarketPriceData = async (req, res) => {
   }
 };
 
+const getMarketPriceById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    if (!id) {
+      return res.status(400).send({
+        success: false,
+        message: "ID is required.",
+        error: {
+          code: "ID_REQUIRED",
+          description:
+            "The _id must be provided to retrieve the market price document.",
+        },
+      });
+    }
+
+    const record = await MarketPrice.findById(id);
+
+    if (!record) {
+      return res.status(404).send({
+        success: false,
+        message: "No document found for the provided ID.",
+        error: {
+          code: "DOCUMENT_NOT_FOUND",
+          description: "No record matches the given _id.",
+        },
+      });
+    }
+
+    return res.status(200).send({
+      success: true,
+      message: "Document retrieved successfully.",
+      data: record,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({
+      success: false,
+      message: "An error occurred while retrieving the document.",
+      error: {
+        code: "SERVER_ERROR",
+        description: error.message,
+      },
+    });
+  }
+};
+
 module.exports = {
   generateMarketPriceData,
   getMarketPriceByFilters,
   addOrUpdateMarketPrice,
+  getMarketPriceById,
 };

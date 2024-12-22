@@ -163,7 +163,6 @@ const getStatesDistrictsCommodities = async (req, res) => {
       });
     }
 
-    // If only stateName is provided, return the list of districts for the state
     if (stateName && !districtName) {
       const state = await State.findOne({ stateName }, "districts.name");
       if (!state) {
@@ -183,7 +182,6 @@ const getStatesDistrictsCommodities = async (req, res) => {
       });
     }
 
-    // If both stateName and districtName are provided, return commodities for that state and district
     if (stateName && districtName) {
       const state = await State.findOne({ stateName }, "districts");
       if (!state) {

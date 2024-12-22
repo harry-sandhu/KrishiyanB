@@ -1,16 +1,13 @@
 const Price = require("../models/appMarketInsight");
 
-// Get price information based on commodity, state, and district
 const getPriceByCommodityStateDistrict = async (req, res) => {
   try {
     const { commodity, state, district } = req.query;
 
-    // Ensure commodity is provided
     if (!commodity) {
       return res.status(400).json({ message: "Commodity is required" });
     }
 
-    // Build query object
     let query = { commodity };
 
     if (state) {
@@ -21,7 +18,6 @@ const getPriceByCommodityStateDistrict = async (req, res) => {
       query.district = district;
     }
 
-    // Fetch the price details from the database
     const priceData = await Price.find(query);
 
     if (priceData.length === 0) {
@@ -46,22 +42,18 @@ const districts = ["Amritsar", "Ludhiana", "Nagpur", "Kanpur", "Jaipur"];
 const markets = ["Market 1", "Market 2", "Market 3", "Market 4", "Market 5"];
 const commodities = ["Wheat", "Rice", "Sugarcane", "Cotton", "Barley"];
 
-// Helper function to generate random number within a range
 const getRandomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-// Controller to generate random price data
 const generateRandomPriceData = async (req, res) => {
   try {
     const { numItems } = req.body;
 
     if (!numItems || numItems <= 0) {
-      return res
-        .status(400)
-        .json({
-          message: "Please provide a valid number of items to generate",
-        });
+      return res.status(400).json({
+        message: "Please provide a valid number of items to generate",
+      });
     }
 
     const randomPriceData = [];
@@ -74,11 +66,10 @@ const generateRandomPriceData = async (req, res) => {
       const randomCommodity =
         commodities[getRandomNumber(0, commodities.length - 1)];
 
-      const todaysPrice = getRandomNumber(100, 500); // Random price between 100 and 500
-      const yesterdaysPrice = getRandomNumber(90, 490); // Random price between 90 and 490
-      const dayBeforeYesterdayPrice = getRandomNumber(80, 480); // Random price between 80 and 480
+      const todaysPrice = getRandomNumber(100, 500);
+      const yesterdaysPrice = getRandomNumber(90, 490);
+      const dayBeforeYesterdayPrice = getRandomNumber(80, 480);
 
-      // Create a new Price document
       const newPrice = new Price({
         state: randomState,
         district: randomDistrict,
@@ -92,7 +83,6 @@ const generateRandomPriceData = async (req, res) => {
       randomPriceData.push(newPrice);
     }
 
-    // Save all generated price data to the database
     const savedData = await Price.insertMany(randomPriceData);
 
     res.status(201).json({

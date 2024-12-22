@@ -53,6 +53,17 @@ const getMarketPriceByFilters = async (req, res) => {
   const { state, district, commodity } = req.query;
 
   try {
+    if (!state || !district || !commodity) {
+      return res.status(400).send({
+        success: false,
+        message: "Missing required query parameters.",
+        error: {
+          code: "MISSING_PARAMETERS",
+          description: "State, district, and commodity must be provided.",
+        },
+      });
+    }
+
     const records = await MarketPrice.find({
       state,
       district,
@@ -60,17 +71,32 @@ const getMarketPriceByFilters = async (req, res) => {
     });
 
     if (!records.length) {
-      return res
-        .status(404)
-        .json({ message: "No data found for the specified filters." });
+      return res.status(404).send({
+        success: false,
+        message: "No data found for the specified filters.",
+        error: {
+          code: "NO_DATA_FOUND",
+          description:
+            "No records match the given state, district, and commodity.",
+        },
+      });
     }
 
-    res.status(200).json(records);
+    return res.status(200).send({
+      success: true,
+      message: "Data retrieved successfully.",
+      data: records,
+    });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while retrieving market price data." });
+    return res.status(500).send({
+      success: false,
+      message: "An error occurred while retrieving market price data.",
+      error: {
+        code: "SERVER_ERROR",
+        description: error.message,
+      },
+    });
   }
 };
 

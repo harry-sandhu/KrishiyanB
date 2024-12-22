@@ -93,7 +93,7 @@ app.use("/api", require("./routes/appCropRoutes.js"));
 app.use("/api", require("./routes/appVerifyDetails.js"));
 app.use("/api", require("./routes/appNews.js"));
 app.use("/api", require("./routes/appInsightData.js"));
-app.use("/api", require("./routes/appMarketInsightYealeyData.js"));
+app.use("/api/market", require("./routes/appMarketInsightYealeyData.js"));
 app.use("/api/appData", require("./routes/appMarketInsight.js"));
 app.use("/api/whatsapp", require("./routes/sendWhatappSMS.js"));
 app.post("/api/upload", upload.single("image"), async (req, res) => {

@@ -10,7 +10,7 @@ const priceSchema = new mongoose.Schema({
   day_before_yesterday_price: { type: Number },
   todays_price_change: { type: Number, default: 0 },
   yesterdays_price_change: { type: Number, default: 0 },
-  date: { type: Date, default: Date.now },
+  primarykey: { type: String },
 });
 
 priceSchema.pre("save", function (next) {

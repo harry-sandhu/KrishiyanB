@@ -40,10 +40,8 @@ dotenv.config();
 
 app.use("*/role-admin/*", tokenAuth, adminAuthorizer);
 app.use("*/role-superAdmin/*", tokenAuth, superAdminAuthorizer);
-app.use("/api/check-admin", tokenAuth, adminAuthorizer); // for frontend check
-app.use("/api/check-superAdmin", tokenAuth, superAdminAuthorizer); // for frontend check
-
-//multer logic
+app.use("/api/check-admin", tokenAuth, adminAuthorizer);
+app.use("/api/check-superAdmin", tokenAuth, superAdminAuthorizer);
 
 const upload = multer({ storage: multer.memoryStorage() });
 

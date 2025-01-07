@@ -22,7 +22,6 @@ exports.createOrUpdateCommodity = async (req, res) => {
       verified,
     } = req.body;
 
-    // Check if UID is provided
     if (!uid) {
       return res.status(400).send({
         success: false,
@@ -35,7 +34,6 @@ exports.createOrUpdateCommodity = async (req, res) => {
       });
     }
 
-    // Create a new commodity entry
     let newCommodity = new Commodity({
       uid,
       operation,
@@ -90,7 +88,6 @@ exports.getCommodityByUid = async (req, res) => {
       });
     }
 
-    // Find all commodities with the given UID and sort them by the 'verified' field
     let commodities = await Commodity.find({ uid }).sort({ verified: -1 });
 
     if (commodities.length === 0) {
@@ -104,7 +101,6 @@ exports.getCommodityByUid = async (req, res) => {
       });
     }
 
-    // Mask 10-digit numbers in the 'comments' field
     commodities = commodities.map((commodity) => {
       commodity = JSON.parse(JSON.stringify(commodity));
       if (commodity.comments && typeof commodity.comments === "string") {
@@ -138,7 +134,6 @@ exports.getAllCommodities = async (req, res) => {
   try {
     let commodities = await Commodity.find().sort({ verified: -1 });
 
-    // Mask 10-digit numbers in the 'comments' field
     commodities = commodities.map((commodity) => {
       commodity = JSON.parse(JSON.stringify(commodity));
       if (commodity.comments && typeof commodity.comments === "string") {
@@ -174,7 +169,6 @@ exports.updateVerifiedStatus = async (req, res) => {
     const { uid } = req.params;
     const { verified } = req.body;
 
-    // Check if uid is provided
     if (!uid) {
       return res.status(400).send({
         success: false,
@@ -186,11 +180,10 @@ exports.updateVerifiedStatus = async (req, res) => {
       });
     }
 
-    // Find the commodity by uid and update the verified status
     let commodity = await Commodity.findOneAndUpdate(
       { uid },
       { verified },
-      { new: true } // Return the updated document
+      { new: true }
     );
 
     if (!commodity) {
@@ -228,7 +221,6 @@ exports.updateCommodityByUidAndId = async (req, res) => {
     const { uid, id } = req.params;
     const updateData = req.body;
 
-    // Check if UID and ID are provided
     if (!uid || !id) {
       return res.status(400).send({
         success: false,
@@ -241,11 +233,10 @@ exports.updateCommodityByUidAndId = async (req, res) => {
       });
     }
 
-    // Find the commodity by UID and _id and update it
     const updatedCommodity = await Commodity.findOneAndUpdate(
       { uid, _id: id },
       updateData,
-      { new: true } // Return the updated document
+      { new: true }
     );
 
     if (!updatedCommodity) {
@@ -280,13 +271,10 @@ exports.updateCommodityByUidAndId = async (req, res) => {
 // Controller to fetch commodities based on the commodity value
 exports.getCommoditiesByValue = async (req, res) => {
   try {
-    // Extract the commodity value from request parameters
     const { commodity } = req.params;
 
-    // Find all records matching the provided commodity value
     const commodities = await Commodity.find({ commodity });
 
-    // If no commodities found, return a 404 error
     if (!commodities.length) {
       return res.status(404).send({
         success: false,
@@ -298,16 +286,14 @@ exports.getCommoditiesByValue = async (req, res) => {
       });
     }
 
-    // Return all the data related to the found commodities
     res.status(200).send({
       success: true,
       message: `Commodities for ${commodity} retrieved successfully`,
-      data: commodities, // Send all commodity details
+      data: commodities,
     });
   } catch (error) {
     console.error("Error retrieving commodities:", error);
 
-    // Handle server error
     res.status(500).send({
       success: false,
       message: "Error retrieving commodities",
@@ -322,22 +308,17 @@ exports.getCommoditiesByValue = async (req, res) => {
 // Controller to fetch commodities based on uid, commodity, and optional operation
 exports.getCommoditiesByUidOperationCommodity = async (req, res) => {
   try {
-    // Extract uid, commodity, and operation from request parameters
     const { uid, commodity } = req.params;
-    let { operation } = req.query; // operation can be provided in query params
+    let { operation } = req.query;
 
-    // If no operation is specified, default to "Buy"
     if (!operation) {
       operation = "Buy";
     }
 
-    // Construct the query based on uid, commodity, and operation
     const query = { uid, commodity, operation };
 
-    // Find commodities matching the provided uid, commodity, and operation (or default)
     const commodities = await Commodity.find(query);
 
-    // If no commodities are found, return a 404 error
     if (!commodities.length) {
       return res.status(404).send({
         success: false,
@@ -349,16 +330,14 @@ exports.getCommoditiesByUidOperationCommodity = async (req, res) => {
       });
     }
 
-    // Return all the data related to the found commodities
     res.status(200).send({
       success: true,
       message: `Enquiry retrieved successfully for uid: ${uid}, commodity: ${commodity}, and operation: ${operation}`,
-      data: commodities, // Send all commodity details
+      data: commodities,
     });
   } catch (error) {
     console.error("Error retrieving commodities:", error);
 
-    // Handle server error
     res.status(500).send({
       success: false,
       message: "Error retrieving commodities",

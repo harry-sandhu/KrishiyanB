@@ -15,7 +15,6 @@ const cropDataSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Check if the model is already defined
 const CropData =
   mongoose.models.CropData || mongoose.model("CropData", cropDataSchema);
 

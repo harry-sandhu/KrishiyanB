@@ -1,13 +1,12 @@
 const axios = require("axios");
-const MandiPrice = require("../models/mandiPrices"); // Adjust the path as needed
+const MandiPrice = require("../models/mandiPrices");
 const State = require("../models/appMandiFilter");
-// URL of the API
+
 const apiUrl =
   "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001f665d8c53ebc4d9f7c6cbee1f85aa583&format=json&limit=10000";
 
 const fetchAndSaveMandiPrices = async (req, res) => {
   try {
-    // Fetch data from API
     const response = await axios.get(apiUrl);
 
     const records = response.data.records;
@@ -19,7 +18,6 @@ const fetchAndSaveMandiPrices = async (req, res) => {
         .json({ message: "Invalid data format received from API." });
     }
 
-    // Convert records to the format needed by MandiPrice schema
     const mandiPriceData = records.map((record) => {
       return {
         state: record.state || "N/A",
@@ -35,7 +33,6 @@ const fetchAndSaveMandiPrices = async (req, res) => {
       };
     });
 
-    // Insert data into MongoDB
     await MandiPrice.insertMany(mandiPriceData);
 
     res.status(200).json({ message: "Data saved successfully!" });
@@ -50,20 +47,17 @@ const getMandiPrices = async (req, res) => {
   try {
     const { state, district, commodity, initialDate, finalDate } = req.query;
 
-    // Convert initialDate and finalDate to YYYY-MM-DD format
-    const formattedInitialDate = initialDate.split("/").reverse().join("-"); // DD/MM/YYYY -> YYYY-MM-DD
-    const formattedFinalDate = finalDate.split("/").reverse().join("-"); // DD/MM/YYYY -> YYYY-MM-DD
+    const formattedInitialDate = initialDate.split("/").reverse().join("-");
+    const formattedFinalDate = finalDate.split("/").reverse().join("-");
 
-    // Fetch all relevant data from the database
     const allData = await MandiPrice.find({
       state: state,
       district: district,
       commodity: commodity,
     });
 
-    // Filter manually by converting each arrival_date to YYYY-MM-DD
     const filteredData = allData.filter((item) => {
-      const arrivalDate = item.arrival_date.split("/").reverse().join("-"); // Convert to YYYY-MM-DD
+      const arrivalDate = item.arrival_date.split("/").reverse().join("-");
       return (
         arrivalDate >= formattedInitialDate && arrivalDate <= formattedFinalDate
       );
@@ -237,7 +231,6 @@ const getStatesDistricts = async (req, res) => {
       });
     }
 
-    // If only stateName is provided, return the list of districts for the state
     if (stateName && !districtName) {
       const state = await State.findOne({ stateName }, "districts.name");
       if (!state) {

@@ -1,4 +1,4 @@
-const MandiPrice = require("../models/mandiPrices"); // Adjust the path as needed
+const MandiPrice = require("../models/mandiPrices");
 
 exports.getLatestMandiPrices = async (req, res) => {
   const { state, district, market, commodity, variety, grade } = req.query;
@@ -23,11 +23,10 @@ exports.getLatestMandiPrices = async (req, res) => {
     if (variety) query.variety = variety;
     if (grade) query.grade = grade;
 
-    // Find the latest arrival_date in the query
     const latestMandiPrices = await MandiPrice.aggregate([
       { $match: query },
-      { $sort: { arrival_date: -1 } }, // Sort by arrival_date in descending order
-      { $limit: 1 }, // Limit to the latest entry
+      { $sort: { arrival_date: -1 } },
+      { $limit: 1 },
     ]);
 
     console.log("this is backend mandi price result", latestMandiPrices);

@@ -149,7 +149,6 @@ const FpoRegistrationSchema = new mongoose.Schema({
   // Participants
   participants: [participantSchema],
 
-  // Timestamps for record keeping (optional)
   createdAt: {
     type: Date,
     default: Date.now,

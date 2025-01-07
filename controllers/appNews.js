@@ -1,5 +1,3 @@
-// newsController.js
-
 const News = require("../models/appNews");
 
 // Create a new news entry
@@ -17,17 +15,14 @@ exports.createNews = async (req, res) => {
 // Get all news entries
 exports.getAllNews = async (req, res) => {
   try {
-    // Fetching all news sorted by priority in ascending order (low to high)
     const news = await News.find().sort({ priority: 1 });
 
-    // Sending the sorted news as a response with the specified format
     res.status(200).send({
       success: true,
       message: "News retrieved successfully",
       data: news,
     });
   } catch (error) {
-    // Handling errors and sending an error response with the specified format
     res.status(500).send({
       success: false,
       message: "Failed to retrieve news",

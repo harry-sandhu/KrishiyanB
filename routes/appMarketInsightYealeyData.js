@@ -12,4 +12,6 @@ router.post(
 );
 router.get("/:id", marketPriceController.getMarketPriceById);
 
+router.get("/me/market-data/give", marketPriceController.getMarketData);
+
 module.exports = router;

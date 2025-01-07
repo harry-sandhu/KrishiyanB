@@ -50,7 +50,6 @@ exports.getBankDetailsByUid = async (req, res) => {
   try {
     const { uid } = req.params;
 
-    // Check if UID is valid
     if (!uid) {
       return res.status(400).send({
         success: false,

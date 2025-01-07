@@ -2,7 +2,6 @@ const FpoOrganization = require("../models/appFPOUser");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// Replace this with your actual secret key
 const JWT_SECRET = "your_secret_key";
 
 // Create a new FPO
@@ -17,10 +16,8 @@ exports.createFpo = async (req, res) => {
       ...otherDetails
     } = req.body;
 
-    // Debug log to print request body
     console.log("Received request body:", req.body);
 
-    // Check for required fields
     if (!typeOfOrganization || !nameOfFpo || !typeOfFpo) {
       return res.status(400).send({
         success: false,
@@ -44,7 +41,6 @@ exports.createFpo = async (req, res) => {
       });
     }
 
-    // Check if the contact number already exists in the database
     const existingFpo = await FpoOrganization.findOne({ contactNumber });
     if (existingFpo) {
       return res.status(400).send({
@@ -58,10 +54,8 @@ exports.createFpo = async (req, res) => {
       });
     }
 
-    // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new FPO organization with the required fields
     const fpoOrganization = new FpoOrganization({
       typeOfOrganization,
       nameOfFpo,
@@ -73,7 +67,6 @@ exports.createFpo = async (req, res) => {
 
     await fpoOrganization.save();
 
-    // Generate a token with the contact number
     const token = jwt.sign(
       { contactNumber: fpoOrganization.contactNumber },
       JWT_SECRET
@@ -103,7 +96,6 @@ exports.signIn = async (req, res) => {
   const { contactNumber, password } = req.body;
   console.log("inside sign up");
   try {
-    // Find the user by contact number
     const fpoOrganization = await FpoOrganization.findOne({ contactNumber });
 
     if (!fpoOrganization) {
@@ -117,7 +109,6 @@ exports.signIn = async (req, res) => {
       });
     }
 
-    // Compare the provided password with the stored hash
     const isMatch = await bcrypt.compare(password, fpoOrganization.password);
 
     if (!isMatch) {
@@ -131,7 +122,6 @@ exports.signIn = async (req, res) => {
       });
     }
 
-    // Generate a token with the contact number and password
     const token = jwt.sign(
       {
         contactNumber: fpoOrganization.contactNumber,
@@ -214,7 +204,6 @@ exports.resetPassword = async (req, res) => {
   const { contactNumber, newPassword } = req.body;
 
   try {
-    // Find the FPO by contact number
     const fpoOrganization = await FpoOrganization.findOne({ contactNumber });
 
     if (!fpoOrganization) {
@@ -229,10 +218,8 @@ exports.resetPassword = async (req, res) => {
       });
     }
 
-    // Hash the new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update the password in the database
     fpoOrganization.password = hashedPassword;
     await fpoOrganization.save();
 

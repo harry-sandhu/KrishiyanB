@@ -98,7 +98,6 @@ const generateRandomPriceData = async (req, res) => {
 
 const populatePriceData = async () => {
   try {
-    // Retrieve documents from MarketPrice one at a time
     const marketPriceCursor = MarketPrice.find({}).cursor();
 
     for (
@@ -108,22 +107,18 @@ const populatePriceData = async () => {
     ) {
       const { _id, state, district, market, commodity, prices } = marketPrice;
 
-      // Sort prices by date (most recent first)
       const sortedPrices = prices.sort((a, b) => b.date - a.date);
 
-      // Get the last 3 prices if available
       const [todaysPrice, yesterdaysPrice, dayBeforeYesterdaysPrice] = [
         sortedPrices[0]?.price || 0,
         sortedPrices[1]?.price || 0,
         sortedPrices[2]?.price || 0,
       ];
 
-      // Calculate price changes
       const todaysPriceChange = todaysPrice - yesterdaysPrice;
       const yesterdaysPriceChange = yesterdaysPrice - dayBeforeYesterdaysPrice;
 
-      // Create or update the Price document
-      const primaryKey = `${state}-${district}-${market}-${commodity}`; // Unique key
+      const primaryKey = `${state}-${district}-${market}-${commodity}`;
 
       await Price.findOneAndUpdate(
         { primarykey: _id },
@@ -137,7 +132,7 @@ const populatePriceData = async () => {
           day_before_yesterday_price: dayBeforeYesterdaysPrice,
           todays_price_change: todaysPriceChange,
           yesterdays_price_change: yesterdaysPriceChange,
-          primarykey: _id, // Using _id from MarketPrice as primarykey
+          primarykey: _id,
         },
         { upsert: true, new: true }
       );

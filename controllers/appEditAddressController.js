@@ -8,7 +8,7 @@ exports.createOrUpdateAddress = async (req, res) => {
     let addressEntry = await Address.findOneAndUpdate(
       { uid },
       { pincode, district, state, address, village },
-      { new: true, upsert: true } // upsert creates a new document if no document matches the query
+      { new: true, upsert: true }
     );
 
     const message = addressEntry.wasNew

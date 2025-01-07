@@ -10,7 +10,6 @@ exports.tokenAuth = async (req, res, next) => {
     console.log("object");
     token = req.token;
     if (!token) {
-      //if no token is present
       throw new Error("User not Signed in, Sign in First.");
     }
     // morgan.logger("decoded", decoded);

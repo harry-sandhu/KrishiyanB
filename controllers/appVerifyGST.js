@@ -6,7 +6,7 @@ exports.verifyGST = async (gstNumber) => {
       method: "POST",
       url: "https://gst-verification-api-at-lowest-price.p.rapidapi.com/api/validation/verify_gst",
       headers: {
-        "x-rapidapi-key": "480611cfccmsh4332c8d4d13d839p10cfbfjsnd0af0158a9d4", // Replace this with your actual API key
+        "x-rapidapi-key": "480611cfccmsh4332c8d4d13d839p10cfbfjsnd0af0158a9d4",
         "x-rapidapi-host":
           "gst-verification-api-at-lowest-price.p.rapidapi.com",
         "Content-Type": "application/json",
@@ -20,7 +20,7 @@ exports.verifyGST = async (gstNumber) => {
     };
 
     const response = await axios.request(options);
-    return response.data; // Return the response data for further use
+    return response.data;
   } catch (error) {
     console.error(
       "Error verifying GST:",

@@ -1,9 +1,9 @@
 const OtherDetails = require("../models/appOtherDetails");
-const { verifyPAN } = require("./appVerifyPan"); // Import PAN verification function
-const { verifyGST } = require("./appVerifyGST"); // Import GST verification function
-const { verifyUdyam } = require("./appVerifyUddam"); // Import Udyam verification function
+const { verifyPAN } = require("./appVerifyPan");
+const { verifyGST } = require("./appVerifyGST");
+const { verifyUdyam } = require("./appVerifyUddam");
 const { lookupIFSC } = require("./appVerifyIFSC");
-// Create or Update Other Details
+
 exports.createOrUpdateOtherDetails = async (req, res) => {
   try {
     const {
@@ -15,7 +15,6 @@ exports.createOrUpdateOtherDetails = async (req, res) => {
       ifscCode,
     } = req.body;
 
-    // Check if UID is provided
     if (!uid) {
       return res.status(400).send({
         success: false,
@@ -28,7 +27,6 @@ exports.createOrUpdateOtherDetails = async (req, res) => {
       });
     }
 
-    // Perform PAN verification
     try {
       const panVerificationResult = await verifyPAN(panCardNumber);
       if (!panVerificationResult.success) {
@@ -52,7 +50,6 @@ exports.createOrUpdateOtherDetails = async (req, res) => {
       });
     }
 
-    // Perform GST verification
     try {
       const gstVerificationResult = await verifyGST(gstNumber);
       if (!gstVerificationResult.success) {
@@ -76,7 +73,6 @@ exports.createOrUpdateOtherDetails = async (req, res) => {
       });
     }
 
-    // Perform Udyam verification
     try {
       const udyamVerificationResult = await verifyUdyam(udyamNumber);
       if (!udyamVerificationResult.success) {
@@ -100,7 +96,6 @@ exports.createOrUpdateOtherDetails = async (req, res) => {
       });
     }
 
-    // Perform IFSC lookup
     try {
       const ifscDetails = await lookupIFSC(ifscCode);
       if (!ifscDetails) {
@@ -124,11 +119,10 @@ exports.createOrUpdateOtherDetails = async (req, res) => {
       });
     }
 
-    // If all verifications are successful, proceed to create or update other details
     let otherDetailsEntry = await OtherDetails.findOneAndUpdate(
       { uid },
       { panCardNumber, gstNumber, udyamNumber, aadhaarNumber },
-      { new: true, upsert: true } // upsert creates a new document if no document matches the query
+      { new: true, upsert: true }
     );
 
     const message = otherDetailsEntry.wasNew
@@ -158,7 +152,6 @@ exports.getOtherDetailsByUid = async (req, res) => {
   try {
     const { uid } = req.params;
 
-    // Check if UID is valid
     if (!uid) {
       return res.status(400).send({
         success: false,

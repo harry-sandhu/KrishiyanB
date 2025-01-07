@@ -79,11 +79,11 @@ exports.getProfileById = async (req, res) => {
 // Get FPO Organization by contact number (excluding password)
 exports.getProfileByContactNumber = async (req, res) => {
   try {
-    const { contactNumber } = req.params; // Get contact number from request parameters
+    const { contactNumber } = req.params;
 
     const fpoProfile = await FpoOrganization.findOne({ contactNumber }).select(
       "-password"
-    ); // Exclude the password field
+    );
 
     if (!fpoProfile) {
       return res.status(404).send({
@@ -114,13 +114,11 @@ exports.getProfileByContactNumber = async (req, res) => {
   }
 };
 
-// Update FPO Organization by contact number (excluding contact number and password)
 exports.updateProfileByContactNumber = async (req, res) => {
   try {
-    const { contactNumber } = req.params; // Get contact number from request parameters
+    const { contactNumber } = req.params;
     const updateData = req.body;
 
-    // Prevent updating the contactNumber and password
     delete updateData.contactNumber;
     delete updateData.password;
 
@@ -162,21 +160,20 @@ exports.updateProfileByContactNumber = async (req, res) => {
 // Update Entity by contact number
 exports.updateByContactNumber = async (req, res) => {
   try {
-    const { contactNumber } = req.params; // Get the contact number from params
+    const { contactNumber } = req.params;
     const {
-      nameOfEntity, // To update nameOfFpo
-      typeOfEntity, // To update typeOfFpo
-      incorporationDate, // To update dateOfFpo
-      incorporationNumber, // To update IncorportionNumber
-      businessLocation, // To update BusinessLocation
+      nameOfEntity,
+      typeOfEntity,
+      incorporationDate,
+      incorporationNumber,
+      businessLocation,
       contactPersonName,
-      contactNumberUpadte, // To update promoterName
+      contactNumberUpadte,
       yourDesignation,
-      Email, // To update yourDesignation
-      URL, // To update URL
+      Email,
+      URL,
     } = req.body;
 
-    // Find the FPO organization by contact number
     const fpo = await FpoOrganization.findOne({ contactNumber });
 
     if (!fpo) {
@@ -190,7 +187,6 @@ exports.updateByContactNumber = async (req, res) => {
       });
     }
 
-    // Only update the fields provided in the request body
     if (nameOfEntity) fpo.nameOfFpo = nameOfEntity;
     if (typeOfEntity) fpo.typeOfFpo = typeOfEntity;
     if (incorporationDate) fpo.dateOfFpo = incorporationDate;
@@ -202,10 +198,8 @@ exports.updateByContactNumber = async (req, res) => {
     if (Email) fpo.organizationalEmail = Email;
     if (URL) fpo.URl = URL;
 
-    // Save the updated FPO organization
     await fpo.save();
 
-    // Return only the updated fields in the response
     const updatedFields = {
       contactNumber,
     };
@@ -243,9 +237,8 @@ exports.updateByContactNumber = async (req, res) => {
 // Get FPO Organization by contact number
 exports.getByContactNumber = async (req, res) => {
   try {
-    const { contactNumber } = req.params; // Get contact number from params
+    const { contactNumber } = req.params;
 
-    // Find the FPO organization by contact number
     const fpo = await FpoOrganization.findOne({ contactNumber });
 
     if (!fpo) {

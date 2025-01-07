@@ -7,9 +7,8 @@ const addOrUpdateMarketPrice = async (req, res) => {
   try {
     const formattedDate = new Date(date);
     const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - 366); // Calculate the cutoff date (366 days ago)
+    cutoffDate.setDate(cutoffDate.getDate() - 366);
 
-    // Find the record for the given state, district, market, and commodity
     let record = await MarketPrice.findOne({
       state,
       district,
@@ -18,7 +17,6 @@ const addOrUpdateMarketPrice = async (req, res) => {
     });
 
     if (!record) {
-      // If no record exists, create a new one
       record = new MarketPrice({
         state,
         district,
@@ -28,13 +26,10 @@ const addOrUpdateMarketPrice = async (req, res) => {
       });
     }
 
-    // Add the new price entry
     record.prices.push({ price, date: formattedDate });
 
-    // Remove prices older than the cutoff date
     record.prices = record.prices.filter((entry) => entry.date >= cutoffDate);
 
-    // Save the record
     await record.save();
 
     res.status(200).json({
@@ -100,13 +95,8 @@ const getMarketPriceByFilters = async (req, res) => {
   }
 };
 
-// Adjust the path to your State model
-// Adjust the path to your MarketPrice model
-
-// Utility to generate a random price
 const generateRandomPrice = () => Math.floor(Math.random() * 10000) + 145;
 
-// Utility to generate price data for 366 days
 const generatePriceData = () => {
   const today = new Date();
   return Array.from({ length: 366 }, (_, i) => ({
@@ -118,24 +108,21 @@ const generatePriceData = () => {
 // Controller to generate and store market price data
 const generateMarketPriceData = async (req, res) => {
   try {
-    const states = await State.find(); // Fetch all states with districts and commodities
+    const states = await State.find();
 
     for (const state of states) {
       for (const district of state.districts) {
         for (const commodity of district.commodities) {
-          // Generate 366 price data
           const priceData = generatePriceData();
 
-          // Create a MarketPrice document
           const marketPriceEntry = new MarketPrice({
             state: state.stateName,
             district: district.name,
-            market: `${district.name} Market`, // Placeholder for market name
+            market: `${district.name} Market`,
             commodity: commodity,
             prices: priceData,
           });
 
-          // Save the entry to the database
           await marketPriceEntry.save();
           console.log(marketPriceEntry);
           console.log(
@@ -204,9 +191,31 @@ const getMarketPriceById = async (req, res) => {
   }
 };
 
+const getMarketData = async (req, res) => {
+  try {
+    const marketData = await MarketPrice.find({}, "state district commodity");
+
+    if (marketData.length === 0) {
+      return res.status(404).json({ message: "No market data found." });
+    }
+
+    res.status(200).json({
+      message: "Market data retrieved successfully.",
+      data: marketData,
+    });
+  } catch (error) {
+    console.error("Error fetching market data:", error);
+    res.status(500).json({
+      message: "Internal server error.",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   generateMarketPriceData,
   getMarketPriceByFilters,
   addOrUpdateMarketPrice,
   getMarketPriceById,
+  getMarketData,
 };

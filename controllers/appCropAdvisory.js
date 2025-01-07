@@ -6,7 +6,6 @@ exports.getVarityByLocalName = async (req, res) => {
   try {
     const { localName } = req.params;
 
-    // Step 1: Search for the crop by localName
     const crop = await Crop.findOne({ localName });
 
     if (!crop) {
@@ -17,7 +16,6 @@ exports.getVarityByLocalName = async (req, res) => {
       });
     }
 
-    // Step 2: Use the crop _id to search for varieties in Varities collection
     const varities = await Varities.find({ cropId: crop._id });
 
     if (!varities || varities.length === 0) {
@@ -28,7 +26,6 @@ exports.getVarityByLocalName = async (req, res) => {
       });
     }
 
-    // Step 3: Return the found varieties in the desired response format
     return res.status(200).json({
       success: true,
       message: "Varieties retrieved successfully",

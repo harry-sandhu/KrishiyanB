@@ -17,7 +17,7 @@ const verifyPAN = async (req, res) => {
       "Content-Type": "application/json",
     },
     data: {
-      PAN: pan, // Use the PAN value from the request body
+      PAN: pan,
     },
   };
 

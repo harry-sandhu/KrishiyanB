@@ -10,7 +10,6 @@ module.exports.getConfig = () => {
     JWT_SECRET: process.env.JWT_SECRET || "R4ND0M5TR1NG",
   };
 
-  // Modify for Production
   if (process.env.NODE_ENV === "production") {
     config.MODE = "Production";
   }

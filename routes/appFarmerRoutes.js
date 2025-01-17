@@ -49,4 +49,6 @@ router.put(
   "/farmer/whatsapp/:whatsappNumber",
   farmerController.updateFarmerByWhatsapp
 );
+
+router.post("/farmer/bulk-upload", farmerController.bulkUploadFarmers);
 module.exports = router;

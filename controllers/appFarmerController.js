@@ -711,3 +711,56 @@ exports.updateCropCultivation = async (req, res) => {
     });
   }
 };
+
+exports.bulkUploadFarmers = async (req, res) => {
+  const farmersData = req.body; // Array of farmer objects from the frontend
+  const errors = []; // Array to store rejected farmer details with reasons
+  let successCount = 0; // Counter for successful entries
+
+  for (const farmer of farmersData) {
+    try {
+      // Check for required fields
+      const missingFields = [];
+      if (!farmer.dealerNumber) missingFields.push("dealerNumber");
+      if (!farmer.name) missingFields.push("name");
+      if (!farmer.whatsappNumber) missingFields.push("whatsappNumber");
+      if (!farmer.pincode) missingFields.push("pincode");
+
+      if (missingFields.length > 0) {
+        errors.push({
+          farmer,
+          reason: `Missing fields: ${missingFields.join(", ")}`,
+        });
+        continue;
+      }
+
+      // Check for duplicate WhatsApp number
+      const existingFarmer = await appFarmer.findOne({
+        whatsappNumber: farmer.whatsappNumber,
+      });
+      if (existingFarmer) {
+        errors.push({
+          farmer,
+          reason: `Duplicate WhatsApp number: ${farmer.whatsappNumber}`,
+        });
+        continue;
+      }
+
+      // Save the valid farmer data
+      const newFarmer = new appFarmer(farmer);
+      await newFarmer.save();
+      successCount++;
+    } catch (err) {
+      errors.push({
+        farmer,
+        reason: `Database error: ${err.message}`,
+      });
+    }
+  }
+
+  // Response with success count and errors
+  res.status(200).json({
+    message: `${successCount} farmers saved successfully.`,
+    errors,
+  });
+};

@@ -109,31 +109,47 @@ const generatePriceData = () => {
 const generateMarketPriceData = async (req, res) => {
   try {
     const states = await State.find();
+    const allCombinations = [];
 
+    // Collect all state-district-commodity combinations
     for (const state of states) {
       for (const district of state.districts) {
         for (const commodity of district.commodities) {
-          const priceData = generatePriceData();
-
-          const marketPriceEntry = new MarketPrice({
+          allCombinations.push({
             state: state.stateName,
             district: district.name,
-            market: `${district.name} Market`,
-            commodity: commodity,
-            prices: priceData,
+            commodity,
           });
-
-          await marketPriceEntry.save();
-          console.log(marketPriceEntry);
-          console.log(
-            `Generated and saved market price data for ${commodity} in ${district.name}, ${state.stateName}`
-          );
         }
       }
     }
 
+    // Shuffle and select 5 random combinations
+    const selectedCombinations = allCombinations
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 5);
+
+    // Generate and save data for the selected combinations
+    for (const combination of selectedCombinations) {
+      const priceData = generatePriceData();
+
+      const marketPriceEntry = new MarketPrice({
+        state: combination.state,
+        district: combination.district,
+        market: `${combination.district} Market`,
+        commodity: combination.commodity,
+        prices: priceData,
+      });
+
+      await marketPriceEntry.save();
+      console.log(
+        `Generated and saved market price data for ${combination.commodity} in ${combination.district}, ${combination.state}`
+      );
+    }
+
     res.status(201).json({
-      message: "Market price data generated and saved successfully!",
+      message:
+        "Market price data generated and saved for 5 combinations successfully!",
     });
   } catch (error) {
     console.error("Error generating market price data:", error);

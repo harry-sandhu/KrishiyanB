@@ -6,7 +6,7 @@ const cropController = require("../controllers/appCropAdvisory");
 router.get("/all/crops", cropController.getAllCropNames);
 
 // Route to get detailed information based on crop name
-router.get("/crops/:name", cropController.getCropDetailsByName);
+router.get("/cropadvisory/crops/:name", cropController.getCropDetailsByName);
 // Route to get varity by localName
 router.get("/varity/:localName", cropController.getVarityByLocalName);
 

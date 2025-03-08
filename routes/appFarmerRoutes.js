@@ -15,7 +15,7 @@ router.get("/:fid", farmerController.getCropCultivationByFid);
 router.post("/register", farmerController.registerFarmer);
 
 // Route to get all farmers
-router.get("/", farmerController.getFarmers);
+router.get("/all/farmer", farmerController.getFarmers);
 
 // Route to get farmers' names by dealer number
 router.get("/names/:dealerNumber", farmerController.getFarmerNamesByDealer);

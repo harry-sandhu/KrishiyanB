@@ -25,6 +25,7 @@ const OTP = require("./models/Otp");
 const Crop = require("./models/crop");
 const Variety = require("./models/varities");
 const varities = require("./models/varities");
+
 //BodyParser
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
